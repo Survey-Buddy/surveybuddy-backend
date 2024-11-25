@@ -30,7 +30,7 @@ const userSchema = new Schema({
     type: String,
   },
   // References the Roles model
-  roles: [{ type: Schema.Types.ObjectId, ref: "Roles" }],
+  //   roles: [{ type: Schema.Types.ObjectId, ref: "Roles" }],
 });
 
 const User = mongoose.model("User", userSchema);

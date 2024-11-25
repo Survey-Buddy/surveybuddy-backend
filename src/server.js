@@ -8,6 +8,14 @@ const cors = require("cors");
 
 dotenv.config();
 
+const jwtSecretKey = process.env.JWT_SECRET_KEY;
+console.log(jwtSecretKey);
+
+if (!jwtSecretKey) {
+  console.error("JWT_SECRET_KEY is missing in the environment variables.");
+  process.exit(1); // Exit if the secret key is not found
+}
+
 // Initialise express app
 
 const app = express();
@@ -15,7 +23,6 @@ const app = express();
 // Configure Helmet server security
 
 try {
-  app.use(helmet());
   app.use(helmet.permittedCrossDomainPolicies());
   app.use(helmet.referrerPolicy());
   app.use(

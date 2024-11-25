@@ -1,25 +1,28 @@
 const jwt = require("jsonwebtoken");
 
-let jwtSecretKey = process.env.JWT_SECRET_KEY;
-
 // Function to generate a JWT
 
-function generateNewToken(userId, username) {
-  if (!userId || !username) {
+function generateNewToken(userId, username, email) {
+  if (!userId || !username || !email) {
     throw new Error("UserId or Username is missing."); // Throw new error because not directly tied to a HTTP request / response cycle
   }
 
+  const jwtSecretKey = process.env.JWT_SECRET_KEY;
+
+  console.log("JWT Secret Key in token generation:", jwtSecretKey);
   try {
-    token = jwt.sign(
+    const token = jwt.sign(
       {
         userId: userId,
         username: username,
+        email: email,
       },
       jwtSecretKey,
       {
         expiresIn: "7d", // Expires in 7 days
       }
     );
+    console.log(token);
     return token;
   } catch (error) {
     console.error("Error generating new JWT:", error);
