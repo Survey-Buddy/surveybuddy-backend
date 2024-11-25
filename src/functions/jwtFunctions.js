@@ -4,25 +4,25 @@ let jwtSecretKey = process.env.JWT_SECRET_KEY;
 
 // Function to generate a JWT
 
-function generateJWT(userId, username, roles = null) {
+function generateNewToken(userId, username) {
   if (!userId || !username) {
     throw new Error("UserId or Username is missing."); // Throw new error because not directly tied to a HTTP request / response cycle
   }
 
   try {
-    return jwt.sign(
+    token = jwt.sign(
       {
         userId: userId,
         username: username,
-        roles: roles,
       },
       jwtSecretKey,
       {
         expiresIn: "7d", // Expires in 7 days
       }
     );
+    return token;
   } catch (error) {
-    console.error("Error generating JWT:", error);
+    console.error("Error generating new JWT:", error);
     throw new Error("Failed to generate token.");
   }
 }
@@ -31,7 +31,9 @@ function generateJWT(userId, username, roles = null) {
 
 function decodeJWT(token) {
   try {
-    return jwt.verify(token, jwtSecretKey);
+    const decodedToken = jwt.verify(token, jwtSecretKey);
+    console.log(decodedToken);
+    return decodedToken;
   } catch (error) {
     console.error("Error decoding JWT.");
     throw new Error("Invalid or expired JWT token.");
@@ -40,7 +42,7 @@ function decodeJWT(token) {
 
 // Function to validate JWT
 
-async function validateUserAuth(request, response, next) {
+async function validateUserToken(request, response, next) {
   try {
     const token = request.headers.authorization?.split(" ")[1];
     if (!token) {
@@ -64,7 +66,7 @@ async function validateUserAuth(request, response, next) {
 }
 
 module.exports = {
-  generateJWT,
+  generateNewToken,
   decodeJWT,
-  validateUserAuth,
+  validateUserToken,
 };

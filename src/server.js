@@ -1,15 +1,19 @@
 const express = require("express");
-const cors = require("cors");
 const dotenv = require("dotenv");
 const helmet = require("helmet");
+const userRoutes = require("./routes/userRoutes");
+const cors = require("cors");
 
 // Load environment variables
+
 dotenv.config();
 
 // Initialise express app
+
 const app = express();
 
 // Configure Helmet server security
+
 try {
   app.use(helmet());
   app.use(helmet.permittedCrossDomainPolicies());
@@ -42,6 +46,7 @@ let corsOptions = {
 };
 
 // Middleware
+
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(helmet());
