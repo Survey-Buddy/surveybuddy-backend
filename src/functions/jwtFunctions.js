@@ -1,5 +1,17 @@
 const jwt = require("jsonwebtoken");
 
+const dotenv = require("dotenv");
+
+// Load environment variables
+dotenv.config();
+
+let jwtSecretKey = process.env.JWT_SECRET_KEY;
+
+if (!jwtSecretKey) {
+  console.error("JWT_SECRET_KEY is missing in the environment variables.");
+  process.exit(1); // Exit if the secret key is not found
+}
+
 // Function to generate a JWT
 
 function generateNewToken(userId, username, email) {
@@ -7,7 +19,7 @@ function generateNewToken(userId, username, email) {
     throw new Error("UserId or Username is missing."); // Throw new error because not directly tied to a HTTP request / response cycle
   }
 
-  const jwtSecretKey = process.env.JWT_SECRET_KEY;
+  //   const jwtSecretKey = process.env.JWT_SECRET_KEY;
 
   console.log("JWT Secret Key in token generation:", jwtSecretKey);
   try {
