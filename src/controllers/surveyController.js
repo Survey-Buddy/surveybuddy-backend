@@ -1,9 +1,13 @@
 exports.newSurvey = async (request, response) => {
   try {
     // Survey creation logic here
+    // console.log(request);
+    return response.status(200).json({
+      success: true,
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    return response.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -12,7 +16,7 @@ exports.editSurvey = async (request, response) => {
     // Survey edit logic here
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    response.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -21,6 +25,6 @@ exports.deleteSurvey = async (request, response) => {
     // Survey deletion logic here
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    return response.status(500).json({ message: "Internal Server Error" });
   }
 };

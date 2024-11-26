@@ -4,8 +4,10 @@ const { authMiddleware } = require("../functions/jwtFunctions");
 const { checkUserAuthorisaton } = require("../services/authServices");
 const surveyController = require("../controllers/surveyController");
 
+// Surveys Router Routes ( /surveys )
+
 router.post(
-  "/newSurvey",
+  "/newSurvey/:userId",
   authMiddleware,
   checkUserAuthorisaton,
   surveyController.newSurvey

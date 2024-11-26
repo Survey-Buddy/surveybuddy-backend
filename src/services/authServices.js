@@ -19,6 +19,7 @@ exports.checkUserAuthorisaton = (request, response, next) => {
   // Check if the two userIds match
   try {
     if (userId === decodedUserId) {
+      console.log("Debug: Users matched!");
       next();
     } else {
       return response.status(403).json({

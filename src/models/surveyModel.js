@@ -15,7 +15,7 @@ const surveySchema = new Schema({
   author: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: [true, "Author is  required"],
+    // required: [true, "Author is  required"],
   },
   questionCount: {
     type: Number,

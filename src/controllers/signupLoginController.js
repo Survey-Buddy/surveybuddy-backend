@@ -119,6 +119,7 @@ exports.login = async (request, response) => {
 
     return response.status(201).json({
       success: true,
+      userId: user._id,
       username: user.username,
       firstName: user.firstName,
       lastName: user.lastName,

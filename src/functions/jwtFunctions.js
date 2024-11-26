@@ -8,7 +8,7 @@ if (!jwtSecretKey) {
   );
 }
 
-// Function to generate a JWT
+// Function to generate a new JWT
 
 function generateNewToken(userId, username, email) {
   if (!userId || !username || !email) {
