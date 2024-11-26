@@ -1,5 +1,8 @@
 const { generateNewToken } = require("../functions/jwtFunctions");
-const { hashPassword } = require("../services/passwordServices");
+const {
+  hashPassword,
+  comparePasswords,
+} = require("../services/passwordServices");
 const {
   checkExistingEmail,
   checkExistingUsername,
@@ -7,6 +10,7 @@ const {
 const User = require("../models/userModel");
 
 // Path to handle User Signup Registration
+// POST - /users/signup
 
 exports.signup = async (request, response) => {
   const { firstName, lastName, username, email, password } = request.body;
@@ -40,7 +44,7 @@ exports.signup = async (request, response) => {
     // Hash the password
     const hashedPassword = await hashPassword(password);
 
-    // Create variable and save new User to DB
+    // Create new User and save to DB
     const newUser = new User({
       firstName,
       lastName,
@@ -48,25 +52,14 @@ exports.signup = async (request, response) => {
       email,
       password: hashedPassword,
     });
-    // await newUser.save();
+    await newUser.save();
 
-    console.log("Before Save:", newUser);
-    const savedUser = await newUser.save();
-    console.log("Saved User:", savedUser);
-
-    console.log(newUser._id);
-
-    const jwtSecretKey = process.env.JWT_SECRET_KEY;
-    console.log("Process.env in controller:" + jwtSecretKey);
-
-    // Generate token
+    // Generate new token
     const token = generateNewToken(
       newUser._id,
       newUser.username,
       newUser.email
     );
-
-    console.log("New User ID:", savedUser._id);
 
     // Respond to client
     return response.status(201).json({
@@ -85,4 +78,55 @@ exports.signup = async (request, response) => {
   }
 };
 
-exports.login = async (request, response) => {};
+// Login path
+// POST - /users/login
+
+exports.login = async (request, response) => {
+  // Get username and password from request
+  const { username, password } = request.body;
+
+  // Check if username and password exist
+  try {
+    if (!username || !password) {
+      return response.status(400).json({
+        success: false,
+        message: "Missing a required field.",
+      });
+    }
+
+    // Check if username exists in the DB
+    const user = await User.findOne({ username });
+    if (!user) {
+      return response.status(400).json({
+        success: false,
+        message: "Username not found in database.",
+      });
+    }
+
+    // Check if user password matches entered password
+    const passwordMatch = comparePasswords(password, user.password);
+    if (!passwordMatch) {
+      return response.status(400).json({
+        success: false,
+        message: "Incorrect password.",
+      });
+    }
+
+    // Generate new token
+    const token = generateNewToken(user._id, user.username, user.email);
+
+    return response.status(201).json({
+      success: true,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      token: token,
+    });
+  } catch (error) {
+    console.error("Error logging in:", error);
+    return response.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
+  }
+};

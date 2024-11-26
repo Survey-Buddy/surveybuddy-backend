@@ -1,20 +1,20 @@
 const express = require("express");
 const dotenv = require("dotenv");
+dotenv.config();
 const helmet = require("helmet");
+
 const userRoutes = require("./routes/userRoutes");
 const cors = require("cors");
 
 // Load environment variables
 
-dotenv.config();
+// const jwtSecretKey = process.env.JWT_SECRET_KEY;
+// console.log(jwtSecretKey);
 
-const jwtSecretKey = process.env.JWT_SECRET_KEY;
-console.log(jwtSecretKey);
-
-if (!jwtSecretKey) {
-  console.error("JWT_SECRET_KEY is missing in the environment variables.");
-  process.exit(1); // Exit if the secret key is not found
-}
+// if (!jwtSecretKey) {
+//   console.error("JWT_SECRET_KEY is missing in the environment variables.");
+//   process.exit(1); // Exit if the secret key is not found
+// }
 
 // Initialise express app
 

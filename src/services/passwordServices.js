@@ -10,9 +10,9 @@ exports.hashPassword = async (password) => {
   }
 };
 
-exports.comparePasswords = async (originalPassword, hashedPassword) => {
+exports.comparePasswords = async (password, hashedPassword) => {
   try {
-    return await bcrypt.compare(originalPassword, hashedPassword);
+    return await bcrypt.compare(password, hashedPassword);
   } catch (error) {
     console.error("Error comparing passwords:", error);
     throw new Error("Password comparison failed.");

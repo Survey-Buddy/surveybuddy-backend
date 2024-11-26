@@ -1,25 +1,13 @@
 const jwt = require("jsonwebtoken");
 
-const dotenv = require("dotenv");
-
-// Load environment variables
-dotenv.config();
-
 let jwtSecretKey = process.env.JWT_SECRET_KEY;
-
-if (!jwtSecretKey) {
-  console.error("JWT_SECRET_KEY is missing in the environment variables.");
-  process.exit(1); // Exit if the secret key is not found
-}
 
 // Function to generate a JWT
 
 function generateNewToken(userId, username, email) {
   if (!userId || !username || !email) {
-    throw new Error("UserId or Username is missing."); // Throw new error because not directly tied to a HTTP request / response cycle
+    throw new Error("UserId or Username is missing.");
   }
-
-  //   const jwtSecretKey = process.env.JWT_SECRET_KEY;
 
   console.log("JWT Secret Key in token generation:", jwtSecretKey);
   try {
@@ -34,7 +22,7 @@ function generateNewToken(userId, username, email) {
         expiresIn: "7d", // Expires in 7 days
       }
     );
-    console.log(token);
+
     return token;
   } catch (error) {
     console.error("Error generating new JWT:", error);
@@ -47,7 +35,7 @@ function generateNewToken(userId, username, email) {
 function decodeJWT(token) {
   try {
     const decodedToken = jwt.verify(token, jwtSecretKey);
-    console.log(decodedToken);
+
     return decodedToken;
   } catch (error) {
     console.error("Error decoding JWT.");
