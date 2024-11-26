@@ -1,9 +1,14 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const { corsConfig, helmetConfig } = require("./services/securityServices");
+
+// Configure process.env before router routes
 
 dotenv.config();
+
 const userRoutes = require("./routes/userRoutes");
-const { corsConfig, helmetConfig } = require("./services/securityServices");
+const surveyRoutes = require("./routes/surveyRoutes");
+const questionRoutes = require("./routes/questionRoutes");
 
 // Initialise express app
 
@@ -21,6 +26,8 @@ app.use(express.json());
 // Middleware Router Routes
 
 app.use("/users", userRoutes);
+app.use("/surveys", surveyRoutes);
+app.use("/questions", questionRoutes);
 
 // Test route
 
