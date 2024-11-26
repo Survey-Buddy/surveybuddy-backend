@@ -2,6 +2,12 @@ const jwt = require("jsonwebtoken");
 
 let jwtSecretKey = process.env.JWT_SECRET_KEY;
 
+if (!jwtSecretKey) {
+  throw new Error(
+    "JWT secret key is not defined. Check environment variables."
+  );
+}
+
 // Function to generate a JWT
 
 function generateNewToken(userId, username, email) {
@@ -44,7 +50,7 @@ function decodeJWT(token) {
 
 // Function to validate JWT
 
-async function validateUserToken(request, response, next) {
+async function authMiddleware(request, response, next) {
   try {
     const token = request.headers.authorization?.split(" ")[1];
     if (!token) {
@@ -70,5 +76,5 @@ async function validateUserToken(request, response, next) {
 module.exports = {
   generateNewToken,
   decodeJWT,
-  validateUserToken,
+  authMiddleware,
 };
