@@ -9,7 +9,6 @@ function generateNewToken(userId, username, email) {
     throw new Error("UserId or Username is missing.");
   }
 
-  console.log("JWT Secret Key in token generation:", jwtSecretKey);
   try {
     const token = jwt.sign(
       {

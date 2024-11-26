@@ -90,25 +90,27 @@ exports.login = async (request, response) => {
     if (!username || !password) {
       return response.status(400).json({
         success: false,
-        message: "Missing a required field.",
+        message: "Username and password are required",
       });
     }
 
     // Check if username exists in the DB
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).select(
+      "password _id username email"
+    );
     if (!user) {
       return response.status(400).json({
         success: false,
-        message: "Username not found in database.",
+        message: "Invalid username or password.",
       });
     }
 
     // Check if user password matches entered password
-    const passwordMatch = comparePasswords(password, user.password);
+    const passwordMatch = await comparePasswords(password, user.password);
     if (!passwordMatch) {
       return response.status(400).json({
         success: false,
-        message: "Incorrect password.",
+        message: "Invalid username or password.",
       });
     }
 
