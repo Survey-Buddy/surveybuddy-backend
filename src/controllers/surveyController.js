@@ -23,12 +23,14 @@ exports.newSurvey = async (request, response) => {
       });
     }
 
+    // Create and save new Survey
     const newSurvey = new Survey({
       name,
       author: userId,
     });
     await newSurvey.save();
 
+    // Respond to client
     return response.status(201).json({
       success: true,
       message: "Survey created succssfully.",
@@ -53,12 +55,14 @@ exports.editSurvey = async (request, response) => {
   }
 
   try {
+    // Update survey
     const updatedSurvey = await Survey.findByIdAndUpdate(
       surveyId,
       { name },
       { new: true }
     );
 
+    // Respond to client
     return response.status(201).json({
       success: true,
       message: "Survey successfully updated.",
@@ -83,8 +87,10 @@ exports.deleteSurvey = async (request, response) => {
       });
     }
 
+    // Delete survey
     await Survey.findByIdAndDelete(surveyToDelete);
 
+    // Respond to client
     return response.status(201).json({
       success: true,
       message: "Survey deleted successfully.",

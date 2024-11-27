@@ -15,7 +15,7 @@ const questionsSchema = new Schema({
   },
   questionFormat: {
     type: String,
-    enum: [multiChoice, range, writtenResponse],
+    enum: ["multiChoice", "range", "writtenResponse"],
     required: [true, "Question format is required."],
   },
   question: {
