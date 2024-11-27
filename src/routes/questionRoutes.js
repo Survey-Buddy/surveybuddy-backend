@@ -11,7 +11,7 @@ router.post(
   questionController.newQuestion
 );
 router.patch(
-  "/editQuestion:userId",
+  "/editQuestion/:userId",
   authMiddleware,
   questionController.editQuestion
 );

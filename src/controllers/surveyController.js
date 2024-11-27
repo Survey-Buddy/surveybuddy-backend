@@ -54,11 +54,22 @@ exports.editSurvey = async (request, response) => {
     });
   }
 
+  const fieldsToUpdate = {};
+  if (name) fieldsToUpdate.name = name;
+
+  // If no fields to update
+  if (Object.keys(fieldsToUpdate) === 0) {
+    return response.status(400).json({
+      success: false,
+      message: "Missing required field: name.",
+    });
+  }
+
   try {
     // Update survey
     const updatedSurvey = await Survey.findByIdAndUpdate(
       surveyId,
-      { name },
+      fieldsToUpdate,
       { new: true }
     );
 
@@ -74,21 +85,25 @@ exports.editSurvey = async (request, response) => {
   }
 };
 
-// Delete Survey (DELETE)
+// Delete Survey Path (DELETE)
 
 exports.deleteSurvey = async (request, response) => {
   const { surveyId } = request.body;
+  if (!surveyId) {
+    return response.status(404).json({
+      success: false,
+      message: "Missing required field missing to delete survey.",
+    });
+  }
   try {
-    const surveyToDelete = await Survey.findById(surveyId);
+    // Delete survey
+    const surveyToDelete = await Survey.findByIdAndDelete(surveyId);
     if (!surveyToDelete) {
       return response.status(400).json({
         success: false,
         message: "Survey not found.",
       });
     }
-
-    // Delete survey
-    await Survey.findByIdAndDelete(surveyToDelete);
 
     // Respond to client
     return response.status(201).json({
