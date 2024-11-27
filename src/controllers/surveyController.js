@@ -4,11 +4,11 @@ const { User } = require("../models/userModel");
 // Create New Survey (POST)
 
 exports.newSurvey = async (request, response) => {
-  const { name, questionCount } = request.body;
+  const { name } = request.body;
 
   try {
     const userId = request.user?.userId;
-    if (!userId || !name || !questionCount) {
+    if (!userId || !name) {
       return response.status(400).json({
         success: false,
         message: "Missing a required field.",
@@ -26,7 +26,6 @@ exports.newSurvey = async (request, response) => {
     const newSurvey = new Survey({
       name,
       author: userId,
-      questionCount,
     });
     await newSurvey.save();
 
@@ -44,8 +43,27 @@ exports.newSurvey = async (request, response) => {
 // Edit Survey (PATCH)
 
 exports.editSurvey = async (request, response) => {
+  const { surveyId, name } = request.body;
+
+  if (!surveyId || !name) {
+    return response.status(401).json({
+      success: false,
+      message: "Missing a required field",
+    });
+  }
+
   try {
-    // Survey edit logic here
+    const updatedSurvey = await Survey.findByIdAndUpdate(
+      surveyId,
+      { name },
+      { new: true }
+    );
+
+    return response.status(201).json({
+      success: true,
+      message: "Survey successfully updated.",
+      updatedSurvey,
+    });
   } catch (error) {
     console.error(error);
     response.status(500).json({ message: "Internal Server Error" });
@@ -59,7 +77,7 @@ exports.deleteSurvey = async (request, response) => {
   try {
     const surveyToDelete = await Survey.findById(surveyId);
     if (!surveyToDelete) {
-      response.status(400).json({
+      return response.status(400).json({
         success: false,
         message: "Survey not found.",
       });

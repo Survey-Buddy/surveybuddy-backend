@@ -3,7 +3,7 @@ exports.newQuestion = async (request, response) => {
     // Question creation logic here
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    return response.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -12,7 +12,7 @@ exports.editQuestion = async (request, response) => {
     // Question edit logic here
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    return response.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -21,6 +21,6 @@ exports.deleteQuestion = async (request, response) => {
     // Question deletion logic here
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    return response.status(500).json({ message: "Internal Server Error" });
   }
 };

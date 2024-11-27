@@ -18,14 +18,14 @@ const surveySchema = new Schema({
     ref: "User",
     required: [true, "Author is  required"],
   },
-  questionCount: {
-    type: Number,
-    required: [
-      true,
-      "Survey must have a specific number of questions on submit.",
-    ],
-    min: [1, "Survey must have at least 1 question."],
-  },
+  //   questionCount: {
+  //     type: Number,
+  //     required: [
+  //       true,
+  //       "Survey must have a specific number of questions on submit.",
+  //     ],
+  //     min: [1, "Survey must have at least 1 question."],
+  //   },
 });
 
 const Survey = mongoose.model("Survey", surveySchema);
