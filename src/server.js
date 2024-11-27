@@ -22,6 +22,7 @@ app.use(helmetConfig());
 // Middleware
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Middleware Router Routes
 

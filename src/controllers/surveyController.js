@@ -1,9 +1,38 @@
+const { Survey } = require("../models/surveyModel");
+const { User } = require("../models/userModel");
+
 exports.newSurvey = async (request, response) => {
+  const { name, questionCount } = request.body;
+  console.log(name, questionCount);
+  console.log(request.user.userId);
   try {
-    // Survey creation logic here
-    // console.log(request);
-    return response.status(200).json({
+    const userId = request.user?.userId;
+    if (!userId || !name || !questionCount) {
+      return response.status(400).json({
+        success: false,
+        message: "Missing a required field.",
+      });
+    }
+
+    const author = await User.findById(userId);
+    if (!author) {
+      return response.status(404).json({
+        success: false,
+        message: "User not found. Cannot create survey.",
+      });
+    }
+
+    const newSurvey = new Survey({
+      name,
+      author: userId,
+      questionCount,
+    });
+    await newSurvey.save();
+
+    return response.status(201).json({
       success: true,
+      message: "Survey created succssfully.",
+      survey: newSurvey,
     });
   } catch (error) {
     console.error(error);

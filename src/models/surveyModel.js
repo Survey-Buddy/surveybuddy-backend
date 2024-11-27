@@ -10,12 +10,13 @@ const surveySchema = new Schema({
   },
   date: {
     type: Date,
-    deafult: Date.now,
+    default: Date.now,
+    required: true,
   },
   author: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    // required: [true, "Author is  required"],
+    required: [true, "Author is  required"],
   },
   questionCount: {
     type: Number,
