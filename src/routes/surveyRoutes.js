@@ -13,13 +13,13 @@ router.post(
   surveyController.newSurvey
 );
 router.patch(
-  "/editSurvey",
+  "/editSurvey/:userId",
   authMiddleware,
   checkUserAuthorisaton,
   surveyController.editSurvey
 );
 router.delete(
-  "/deleteSurvey",
+  "/deleteSurvey/:userId",
   authMiddleware,
   checkUserAuthorisaton,
   surveyController.deleteSurvey

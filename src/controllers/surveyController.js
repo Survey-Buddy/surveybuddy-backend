@@ -1,10 +1,11 @@
 const { Survey } = require("../models/surveyModel");
 const { User } = require("../models/userModel");
 
+// Create New Survey (POST)
+
 exports.newSurvey = async (request, response) => {
   const { name, questionCount } = request.body;
-  console.log(name, questionCount);
-  console.log(request.user.userId);
+
   try {
     const userId = request.user?.userId;
     if (!userId || !name || !questionCount) {
@@ -40,6 +41,8 @@ exports.newSurvey = async (request, response) => {
   }
 };
 
+// Edit Survey (PATCH)
+
 exports.editSurvey = async (request, response) => {
   try {
     // Survey edit logic here
@@ -49,9 +52,25 @@ exports.editSurvey = async (request, response) => {
   }
 };
 
+// Delete Survey (DELETE)
+
 exports.deleteSurvey = async (request, response) => {
+  const { surveyId } = request.body;
   try {
-    // Survey deletion logic here
+    const surveyToDelete = await Survey.findById(surveyId);
+    if (!surveyToDelete) {
+      response.status(400).json({
+        success: false,
+        message: "Survey not found.",
+      });
+    }
+
+    await Survey.findByIdAndDelete(surveyToDelete);
+
+    return response.status(201).json({
+      success: true,
+      message: "Survey deleted successfully.",
+    });
   } catch (error) {
     console.error(error);
     return response.status(500).json({ message: "Internal Server Error" });
