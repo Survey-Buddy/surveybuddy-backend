@@ -9,6 +9,7 @@ dotenv.config();
 const userRoutes = require("./routes/userRoutes");
 const surveyRoutes = require("./routes/surveyRoutes");
 const questionRoutes = require("./routes/questionRoutes");
+const answerRoutes = require("./routes/answerRoutes");
 
 // Initialise express app
 
@@ -29,6 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/users", userRoutes);
 app.use("/surveys", surveyRoutes);
 app.use("/questions", questionRoutes);
+app.use("/answers", answerRoutes);
 
 // Test route
 

@@ -27,6 +27,7 @@ exports.newSurvey = async (request, response) => {
     const newSurvey = new Survey({
       name,
       author: userId,
+      date: userId.date,
     });
     await newSurvey.save();
 

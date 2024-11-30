@@ -1,3 +1,5 @@
+// Check if decoded JWT userId matches the userId sent in params
+
 exports.checkUserAuthorisaton = (request, response, next) => {
   // Extract userId from params
   const { userId } = request.params;

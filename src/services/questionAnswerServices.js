@@ -1,5 +1,19 @@
+const { Question } = require("../models/questionModel");
+
+// Service to validate answer adheres to correct question format
+
 exports.validateQAndAs = async (request, response, next) => {
-  const { questionFormat, answer } = request.body;
+  const { questionId, answer } = request.body;
+
+  let questionFormat = request.body.questionFormat;
+
+  // If not question format, find and assign value
+  if (!questionFormat) {
+    const question = await Question.findById(questionId);
+    if (question) {
+      questionFormat = question.questionFormat;
+    }
+  }
 
   // Validate required fields
   if (!questionFormat || !answer) {
@@ -56,4 +70,34 @@ exports.validateQAndAs = async (request, response, next) => {
   console.log("Q & A validated!");
   // If questionFormat and answer passes validation move to next middleware or route
   next();
+};
+
+// Service to check if provided question belongs to provided survey
+
+exports.questionBelongsToSurvey = async (request, response, next) => {
+  const { surveyId, questionId } = request.body;
+  try {
+    const question = await Question.findById(questionId);
+    if (!question) {
+      return response.status(404).json({
+        success: false,
+        message: "Question not found.",
+      });
+    }
+
+    if (question.surveyId.toString() !== surveyId) {
+      return response.status(404).json({
+        success: false,
+        message: "Question does not belong to the provided survey.",
+      });
+    }
+
+    return next();
+  } catch (error) {
+    console.error(error);
+    return response.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
+  }
 };

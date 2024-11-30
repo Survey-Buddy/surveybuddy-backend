@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const questionsSchema = new Schema({
+const questionSchema = new Schema({
   surveyId: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Survey",
     required: [true, "Survey is  required."],
   },
@@ -29,7 +29,7 @@ const questionsSchema = new Schema({
   },
 });
 
-const Question = mongoose.model("Question", questionsSchema);
+const Question = mongoose.model("Question", questionSchema);
 
 module.exports = {
   Question,

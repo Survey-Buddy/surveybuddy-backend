@@ -33,7 +33,8 @@ exports.newQuestion = async (request, response) => {
 // Edit Question Path (PATCH)
 
 exports.editQuestion = async (request, response) => {
-  const { questionId, questionFormat, question, answer } = request.body;
+  const { questionId, questionFormat, questionNumber, question, answer } =
+    request.body;
 
   if (!questionId) {
     return response.status(400).json({
@@ -44,6 +45,7 @@ exports.editQuestion = async (request, response) => {
 
   const fieldsToUpdate = {};
   if (questionFormat) fieldsToUpdate.questionFormat = questionFormat;
+  if (questionNumber) fieldsToUpdate.questionNumber = questionNumber;
   if (question) fieldsToUpdate.question = question;
   if (answer) fieldsToUpdate.answer = answer;
 
