@@ -3,7 +3,8 @@ const { Question } = require("../models/questionModel");
 // Service to validate answer adheres to correct question format
 
 exports.validateQAndAs = async (request, response, next) => {
-  const { questionId, answer } = request.body;
+  const { answer } = request.body;
+  const { questionId } = request.params;
 
   let questionFormat = request.body.questionFormat;
 
@@ -75,7 +76,7 @@ exports.validateQAndAs = async (request, response, next) => {
 // Service to check if provided question belongs to provided survey
 
 exports.questionBelongsToSurvey = async (request, response, next) => {
-  const { surveyId, questionId } = request.body;
+  const { surveyId, questionId } = request.params;
   try {
     const question = await Question.findById(questionId);
     if (!question) {

@@ -13,10 +13,10 @@ const surveySchema = new Schema({
     default: Date.now,
     required: true,
   },
-  author: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: [true, "Author is  required"],
+    required: [true, "userId is  required"],
   },
   //   questionCount: {
   //     type: Number,

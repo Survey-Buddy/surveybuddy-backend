@@ -29,8 +29,11 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/users", userRoutes);
 app.use("/surveys", surveyRoutes);
-app.use("/questions", questionRoutes);
-app.use("/answers", answerRoutes);
+
+// Nested routes under surveys
+
+surveyRoutes.use("/:surveyId/questions", questionRoutes);
+questionRoutes.use("/:questionId/answers", answerRoutes);
 
 // Test route
 

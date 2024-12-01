@@ -7,9 +7,9 @@ const {
 const answerController = require("../controllers/answerController");
 const { checkUserAuthorisaton } = require("../services/authServices");
 
-// Answers Router Routes
+// Answers Router Paths
 // Answers cannot be edited by anyone
-// Answers can only be deleted by an admin
+// Answers can only be deleted by a manager
 
 // Answers can be created by any unregistered user
 
@@ -23,7 +23,7 @@ router.post(
 // Answers can only be created by registered users
 
 router.post(
-  "newRegisteredAnswer",
+  "/newRegisteredAnswer",
   checkUserAuthorisaton,
   validateQAndAs,
   questionBelongsToSurvey,

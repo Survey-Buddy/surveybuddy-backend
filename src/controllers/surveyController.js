@@ -1,7 +1,77 @@
 const { Survey } = require("../models/surveyModel");
 const { User } = require("../models/userModel");
 
-// Create New Survey (POST)
+// Get all specific user surveys
+
+exports.getAllSurveys = async (request, response) => {
+  const decodedUserId = request.user?.userId;
+
+  if (!decodedUserId) {
+    return response.status(400).json({
+      success: false,
+      message: "Missing required field: userId.",
+    });
+  }
+
+  try {
+    const userSurveys = await Survey.find({ userId: decodedUserId });
+
+    if (userSurveys.length === 0) {
+      return response.status(404).json({
+        success: false,
+        message: "No surveys found for this user.",
+      });
+    }
+
+    return response.status(200).json({
+      success: true,
+      data: userSurveys,
+    });
+  } catch (error) {
+    console.error("Error fetching user surveys:", error);
+    return response.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
+  }
+};
+
+// Get a specific survey
+
+exports.getSpecificSurvey = async (request, response) => {
+  const { surveyId } = request.params;
+
+  if (!surveyId) {
+    return response.status(404).json({
+      success: false,
+      message: "Missing required field: surveyId.",
+    });
+  }
+
+  try {
+    const survey = await Survey.findById(surveyId);
+
+    if (!survey) {
+      return response.status(404).json({
+        success: false,
+        message: "No survey with that Id found.",
+      });
+    }
+
+    return response.status(200).json({
+      success: true,
+      data: survey,
+    });
+  } catch (error) {
+    console.error("Error fetching specific survey.");
+    return response.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
+  }
+};
+
+// Create New Survey
 
 exports.newSurvey = async (request, response) => {
   const { name } = request.body;
@@ -15,8 +85,8 @@ exports.newSurvey = async (request, response) => {
       });
     }
 
-    const author = await User.findById(userId);
-    if (!author) {
+    const user = await User.findById(userId);
+    if (!user) {
       return response.status(404).json({
         success: false,
         message: "User not found. Cannot create survey.",
@@ -26,8 +96,8 @@ exports.newSurvey = async (request, response) => {
     // Create and save new Survey
     const newSurvey = new Survey({
       name,
-      author: userId,
-      date: userId.date,
+      userId: userId,
+      date: new Date(),
     });
     await newSurvey.save();
 
@@ -46,7 +116,8 @@ exports.newSurvey = async (request, response) => {
 // Edit Survey (PATCH)
 
 exports.editSurvey = async (request, response) => {
-  const { surveyId, name } = request.body;
+  const { name } = request.body;
+  const { surveyId } = request.params;
 
   if (!surveyId || !name) {
     return response.status(401).json({
@@ -75,7 +146,7 @@ exports.editSurvey = async (request, response) => {
     );
 
     // Respond to client
-    return response.status(201).json({
+    return response.status(200).json({
       success: true,
       message: "Survey successfully updated.",
       updatedSurvey,
@@ -89,13 +160,15 @@ exports.editSurvey = async (request, response) => {
 // Delete Survey Path (DELETE)
 
 exports.deleteSurvey = async (request, response) => {
-  const { surveyId } = request.body;
+  const { surveyId } = request.params;
+
   if (!surveyId) {
     return response.status(404).json({
       success: false,
       message: "Missing required field missing to delete survey.",
     });
   }
+
   try {
     // Delete survey
     const surveyToDelete = await Survey.findByIdAndDelete(surveyId);
