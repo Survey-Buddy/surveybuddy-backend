@@ -1,7 +1,8 @@
-const User = require("../models/userModel");
+const { User } = require("../models/userModel");
 
 // Check if email already exists
 exports.checkExistingEmail = async (email) => {
+  console.log(User);
   try {
     return await User.findOne({ email });
   } catch (error) {

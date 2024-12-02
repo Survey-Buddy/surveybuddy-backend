@@ -1,14 +1,14 @@
 const { Question } = require("../models/questionModel");
 const { Survey } = require("../models/surveyModel");
 
-// Check if user is creator of field name
+// isCreator middleware
 
-exports.isCreator = async (model, fieldName) => {
+exports.isCreator = (model, fieldName) => {
   return async (request, response, next) => {
     const { [fieldName]: id } = request.params;
     const decodedUserId = request.user?.userId;
 
-    // Check if request includes required fields
+    // Ensure that both the ID and the decoded user ID are in request
     if (!id || !decodedUserId) {
       return response.status(400).json({
         success: false,
@@ -17,8 +17,25 @@ exports.isCreator = async (model, fieldName) => {
     }
 
     try {
-      // Check if User is creator
-      const resource = await model.findById(id);
+      console.log("Id is:", id);
+
+      // Check if the resource exists
+      let resource = await model.findById(id);
+
+      if (model === Question) {
+        resource = await Survey.findById(resource.surveyId);
+      }
+
+      if (!resource) {
+        return response.status(404).json({
+          success: false,
+          message: `${fieldName} not found.`,
+        });
+      }
+
+      console.log("Resource = ", resource);
+
+      // Check if the user is the creator of the resource
       if (resource.userId.toString() !== decodedUserId) {
         return response.status(403).json({
           success: false,
@@ -26,10 +43,11 @@ exports.isCreator = async (model, fieldName) => {
         });
       }
 
-      // User is creator
-      return next();
+      // Proceed to next middleware if the user is the creator
+      next();
     } catch (error) {
-      console.error(`Error checking ownership of ${fieldName}.`, error);
+      // Handle any errors that occur during the check
+      console.error(`Error checking ownership of ${fieldName}:`, error);
       return response.status(500).json({
         success: false,
         message: "Internal server error.",
@@ -37,6 +55,50 @@ exports.isCreator = async (model, fieldName) => {
     }
   };
 };
+
+// exports.isCreator = async (model, fieldName) => {
+//   return async (request, response, next) => {
+//     const { [fieldName]: id } = request.params;
+//     const decodedUserId = request.user?.userId;
+
+//     console.log("Middleware params:", { id, decodedUserId });
+
+//     // Check if request includes required fields
+//     if (!id || !decodedUserId) {
+//       return response.status(400).json({
+//         success: false,
+//         message: `Missing required fields: ${fieldName} or decodedUserId.`,
+//       });
+//     }
+//     try {
+//       // Check if User is creator
+//       const resource = await model.findById(id);
+
+//       if (!resource) {
+//         return response.status(404).json({
+//           success: false,
+//           message: `${fieldName} not found.`,
+//         });
+//       }
+
+//       if (resource.userId.toString() !== decodedUserId) {
+//         return response.status(403).json({
+//           success: false,
+//           message: `You are not the creator of this ${fieldName}.`,
+//         });
+//       }
+//       console.log("User is creator, proceeding to next.");
+//       // User is creator
+//       next();
+//     } catch (error) {
+//       console.error(`Error checking ownership of ${fieldName}.`, error);
+//       return response.status(500).json({
+//         success: false,
+//         message: "Internal server error.",
+//       });
+//     }
+//   };
+// };
 
 // Service to validate if User is a manager
 

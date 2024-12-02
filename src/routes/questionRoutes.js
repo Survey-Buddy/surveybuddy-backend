@@ -1,29 +1,38 @@
 const express = require("express");
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const {
   newQuestion,
   editQuestion,
   deleteQuestion,
+  getQuestion,
+  getQuestions,
 } = require("../controllers/questionController");
 const { validateQAndAs } = require("../services/questionAnswerServices");
 const { authMiddleware } = require("../functions/jwtFunctions");
 const { isCreator } = require("../services/rolesServices");
 const { Question } = require("../models/questionModel");
+const answerRoutes = require("../routes/answerRoutes");
 
-// Question Router Paths
-// Nested under survey routes
-// '/surveys/:surveyId/questions'
+// Nested child routes
+
+// router.use("/:questionId/answers", answerRoutes);
+
+// Question Router Paths - prefix: '/surveys/:surveyId/questions'
 
 // Get all questions for a specific survey
-// GET - '/surveys/:surveyId/questions'
+
 router.get("/", getQuestions);
 
+// Get specific questions
+
+router.get("/:questionId", getQuestion);
+
 // Create a new question for a specific survey
-// POST - '/surveys/:surveyId/questions'
+
 router.post("/", authMiddleware, validateQAndAs, newQuestion);
 
 // Update a question for a specific survey
-// PATCH - '/surveys/:surveyId/questions/:questionId/editQuestion'
+
 router.patch(
   "/:questionId/editQuestion",
   authMiddleware,
@@ -32,7 +41,7 @@ router.patch(
 );
 
 // Delete a question from a specific survey
-// DELETE - '/surveys/:surveyId/questions//:questionId/deleteQuestion'
+
 router.delete(
   "/:questionId/deleteQuestion",
   authMiddleware,

@@ -3,11 +3,6 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const answerSchema = new Schema({
-  surveyId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Survey",
-    required: true,
-  },
   questionId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Question",
@@ -15,7 +10,7 @@ const answerSchema = new Schema({
   },
   submittedAt: {
     type: Date,
-    default: Date.time,
+    default: Date.now,
     required: true,
   },
   userId: {
@@ -23,6 +18,7 @@ const answerSchema = new Schema({
   },
   answer: {
     type: mongoose.Schema.Types.Mixed,
+    required: true,
   },
 });
 

@@ -7,7 +7,7 @@ const {
   checkExistingEmail,
   checkExistingUsername,
 } = require("../services/userServices");
-const User = require("../models/userModel");
+const { User } = require("../models/userModel");
 
 // Path to handle User Signup Registration
 // POST - /users/signup

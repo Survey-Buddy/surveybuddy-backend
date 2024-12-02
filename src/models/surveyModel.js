@@ -8,6 +8,11 @@ const surveySchema = new Schema({
     required: [true, "Survey title is required"],
     minLength: [5, "Survey title must be at least 5 characters long."],
   },
+  description: {
+    type: String,
+    required: true,
+    minLength: [5, "Survey description must be at least 5 characters long."],
+  },
   date: {
     type: Date,
     default: Date.now,

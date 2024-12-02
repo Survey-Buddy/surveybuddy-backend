@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const { authMiddleware } = require("../functions/jwtFunctions");
 const {
   newSurvey,
@@ -10,15 +10,20 @@ const {
 } = require("../controllers/surveyController");
 const { isCreator } = require("../services/rolesServices");
 const { Survey } = require("../models/surveyModel");
+const questionRoutes = require("../routes/questionRoutes");
+const answerRoutes = require("../routes/answerRoutes");
+
+// Nested question child routes
+
+router.use("/:surveyId/questions", questionRoutes);
+router.use("/:surveyId/answers", answerRoutes);
 
 // Surveys Router Routes ( /surveys )
 
 // Get all User created surveys
-// GET - '/'
 router.get("/", authMiddleware, getAllSurveys);
 
 // Get specific survey
-// GET - '/:surveyId'
 router.get(
   "/:surveyId",
   authMiddleware,
@@ -27,11 +32,9 @@ router.get(
 );
 
 // Create new survey
-// POST - '/'
 router.post("/", authMiddleware, newSurvey);
 
 // Update survey
-// PATCH - '/:surveyId/editSurvey'
 router.patch(
   "/:surveyId/editSurvey",
   authMiddleware,
@@ -40,7 +43,6 @@ router.patch(
 );
 
 // Delete survey
-// DELETE - '/:surveyId/deleteSurvey'
 router.delete(
   "/:surveyId/deleteSurvey",
   authMiddleware,

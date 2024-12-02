@@ -42,7 +42,7 @@ exports.getSpecificSurvey = async (request, response) => {
   const { surveyId } = request.params;
 
   if (!surveyId) {
-    return response.status(404).json({
+    return response.status(400).json({
       success: false,
       message: "Missing required field: surveyId.",
     });
@@ -63,7 +63,7 @@ exports.getSpecificSurvey = async (request, response) => {
       data: survey,
     });
   } catch (error) {
-    console.error("Error fetching specific survey.");
+    console.error("Error fetching specific survey.", error);
     return response.status(500).json({
       success: false,
       message: "Internal server error.",
@@ -74,11 +74,11 @@ exports.getSpecificSurvey = async (request, response) => {
 // Create New Survey
 
 exports.newSurvey = async (request, response) => {
-  const { name } = request.body;
+  const { name, description } = request.body;
 
   try {
     const userId = request.user?.userId;
-    if (!userId || !name) {
+    if (!userId || !name || !description) {
       return response.status(400).json({
         success: false,
         message: "Missing a required field.",
@@ -96,6 +96,7 @@ exports.newSurvey = async (request, response) => {
     // Create and save new Survey
     const newSurvey = new Survey({
       name,
+      description,
       userId: userId,
       date: new Date(),
     });
@@ -108,7 +109,7 @@ exports.newSurvey = async (request, response) => {
       survey: newSurvey,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error creating new survey", error);
     return response.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -116,21 +117,29 @@ exports.newSurvey = async (request, response) => {
 // Edit Survey (PATCH)
 
 exports.editSurvey = async (request, response) => {
-  const { name } = request.body;
+  const { name, description } = request.body;
   const { surveyId } = request.params;
 
-  if (!surveyId || !name) {
-    return response.status(401).json({
+  if (!surveyId) {
+    return response.status(400).json({
       success: false,
-      message: "Missing a required field",
+      message: "Missing a required field: surveyId.",
+    });
+  }
+
+  if (!name && !description) {
+    return response.status(400).json({
+      success: false,
+      message: "No new survey data to update.",
     });
   }
 
   const fieldsToUpdate = {};
   if (name) fieldsToUpdate.name = name;
+  if (description) fieldsToUpdate.description = description;
 
   // If no fields to update
-  if (Object.keys(fieldsToUpdate) === 0) {
+  if (Object.keys(fieldsToUpdate).length === 0) {
     return response.status(400).json({
       success: false,
       message: "Missing required field: name.",
@@ -141,9 +150,18 @@ exports.editSurvey = async (request, response) => {
     // Update survey
     const updatedSurvey = await Survey.findByIdAndUpdate(
       surveyId,
-      fieldsToUpdate,
-      { new: true }
+      // Only include truthy values in update
+      { ...(name && { name }), ...(description && { description }) },
+      // Enforce schema validation rules (minLength etc)
+      { new: true, runValidators: true }
     );
+
+    if (!updatedSurvey) {
+      return res.status(404).json({
+        success: false,
+        message: "Survey not found.",
+      });
+    }
 
     // Respond to client
     return response.status(200).json({
@@ -152,7 +170,7 @@ exports.editSurvey = async (request, response) => {
       updatedSurvey,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error updating survey:", error);
     response.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -185,7 +203,7 @@ exports.deleteSurvey = async (request, response) => {
       message: "Survey deleted successfully.",
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error deleting survey:", error);
     return response.status(500).json({ message: "Internal Server Error" });
   }
 };

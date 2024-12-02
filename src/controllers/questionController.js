@@ -1,8 +1,97 @@
 const { Question } = require("../models/questionModel");
+const { checkIsValidObjectId } = require("../services/mongooseServices");
+
+// Get all questions from a specific survey
+
+exports.getQuestions = async (request, response) => {
+  try {
+    const { surveyId } = request.params;
+
+    if (!surveyId) {
+      return response.status(400).json({
+        success: false,
+        message: "Missing required field: surveyId.",
+      });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(surveyId)) {
+      return response.status(400).json({
+        success: false,
+        message: "Invalid surveyId format.",
+      });
+    }
+
+    const isValidObjectId = checkIsValidObjectId(surveyId);
+    if (!isValidObjectId) {
+      return response.status(400).json({
+        success: false,
+        message: "Invalid surveyId format.",
+      });
+    }
+
+    const questions = await Question.find({ surveyId: surveyId });
+
+    if (!questions) {
+      return res.status(404).json({
+        success: false,
+        message: "Question not found.",
+      });
+    }
+
+    return response.status(200).json({
+      success: true,
+      data: questions,
+    });
+  } catch (error) {
+    console.error(error);
+    return response.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Get a specific question
+
+exports.getQuestion = async (request, response) => {
+  try {
+    const { questionId } = request.params;
+
+    if (!questionId) {
+      return response.status(400).json({
+        success: false,
+        message: "Missing required field: questionId.",
+      });
+    }
+
+    const isValidObjectId = checkIsValidObjectId(questionId);
+    if (!isValidObjectId) {
+      return response.status(400).json({
+        success: false,
+        message: "Invalid questionId format.",
+      });
+    }
+
+    const question = await Question.findById(questionId);
+
+    if (!question) {
+      return res.status(404).json({
+        success: false,
+        message: "Question not found.",
+      });
+    }
+
+    return response.status(200).json({
+      success: true,
+      data: question,
+    });
+  } catch (error) {
+    console.error(error);
+    return response.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 exports.newQuestion = async (request, response) => {
-  const { surveyId, questionNumber, questionFormat, question, answer } =
-    request.body;
+  const { questionNumber, questionFormat, question, answer } = request.body;
+  const { surveyId } = request.params;
+
   if (!surveyId || !questionNumber || !questionFormat || !question || !answer) {
     return response.status(400).json({
       success: false,
@@ -33,8 +122,8 @@ exports.newQuestion = async (request, response) => {
 // Edit Question Path (PATCH)
 
 exports.editQuestion = async (request, response) => {
-  const { questionId, questionFormat, questionNumber, question, answer } =
-    request.body;
+  const { questionFormat, questionNumber, question, answer } = request.body;
+  const { questionId } = request.params;
 
   if (!questionId) {
     return response.status(400).json({
@@ -88,7 +177,7 @@ exports.deleteQuestion = async (request, response) => {
   if (!questionId) {
     return response.status(404).json({
       success: false,
-      message: "Required field missing to delete question.",
+      message: "Missing required field: questionId.",
     });
   }
   try {

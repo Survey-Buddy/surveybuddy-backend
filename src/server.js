@@ -8,8 +8,6 @@ dotenv.config();
 
 const userRoutes = require("./routes/userRoutes");
 const surveyRoutes = require("./routes/surveyRoutes");
-const questionRoutes = require("./routes/questionRoutes");
-const answerRoutes = require("./routes/answerRoutes");
 
 // Initialise express app
 
@@ -29,11 +27,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/users", userRoutes);
 app.use("/surveys", surveyRoutes);
-
-// Nested routes under surveys
-
-surveyRoutes.use("/:surveyId/questions", questionRoutes);
-questionRoutes.use("/:questionId/answers", answerRoutes);
 
 // Test route
 
