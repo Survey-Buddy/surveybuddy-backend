@@ -12,6 +12,7 @@ const {
 } = require("../controllers/answerController");
 const { checkUserAuthorisaton } = require("../services/authServices");
 const { authMiddleware } = require("../functions/jwtFunctions");
+const { isCreator } = require("../services/rolesServices");
 
 // prefix: '/surveys/:surveyId/answers'
 
@@ -19,21 +20,26 @@ const { authMiddleware } = require("../functions/jwtFunctions");
 // Answers cannot be edited by anyone
 // Answers can only be deleted by a manager
 
+// Get All Question Answers
+
 router.get(
   "/:questionId",
   authMiddleware,
+  //   isCreator,
   validateQAndAs,
   questionBelongsToSurvey,
   getQuestionAnswers
 );
 
-router.get("/", authMiddleware, questionBelongsToSurvey, getSurveyAnswers);
+// Get All Survey Answers
 
-// Answers can be created by any unregistered user
+router.get("/", authMiddleware, getSurveyAnswers);
+
+// Unregistered User Answers
 
 router.post("/:questionId", validateQAndAs, questionBelongsToSurvey, newAnswer);
 
-// Answers can only be created by registered users
+// Registered User Answers
 
 router.post(
   "/:questionId/registeredAnswer",

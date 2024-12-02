@@ -53,6 +53,7 @@ exports.getQuestionAnswers = async (request, response) => {
 exports.getSurveyAnswers = async (request, response) => {
   try {
     const { surveyId } = request.params;
+
     if (!surveyId) {
       return response.status(400).json({
         success: false,
@@ -60,25 +61,37 @@ exports.getSurveyAnswers = async (request, response) => {
       });
     }
 
-    const questions = await Question.find({ surveyId: surveyId });
-    if (!questions) {
+    const questionsWithAnswers = await Question.aggregate([
+      // Find all the questions that have provided surveyId
+      { $match: { surveyId: new mongoose.Types.ObjectId(surveyId) } },
+      {
+        $lookup: {
+          from: "answers", // Collect to join with
+          localField: "_id", // Field in question model to match
+          foreignField: "questionId", // Field in answer model to match
+          as: "answers", // Output array name
+        },
+      },
+    ]);
+
+    // const answers = await Answer.find({ questionId: questions._id });
+    if (!questionsWithAnswers) {
       return response.status(404).json({
         success: false,
-        message: "There are no questions for this survey.",
+        message: "There are no questionsWithAnswers for this survey.",
       });
     }
 
-    const answers = await Answer.find({ questionId: questions.questionId });
-    if (!answers) {
+    if (questionsWithAnswers.length === 0) {
       return response.status(404).json({
         success: false,
-        message: "There are no answers for this survey.",
+        message: "There are no questionsWithAnswers for this question.",
       });
     }
 
     return response.status(200).json({
       success: true,
-      data: answers,
+      data: { questionsWithAnswers },
     });
   } catch (error) {
     console.error("Error fetching question answers:", error);
