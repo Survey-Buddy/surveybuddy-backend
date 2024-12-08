@@ -18,16 +18,7 @@ exports.getQuestionAnswers = async (request, response) => {
       questionId: questionId,
     });
 
-    // const answers = await Answer.find({
-    //   questionId: mongoose.Types.ObjectId(questionId),
-    // });
-    // if (!answers) {
-    //   return response.status(404).json({
-    //     success: false,
-    //     message: "There are no answers for this question.",
-    //   });
-    // }
-
+    // Check is any answers exist
     if (answers.length === 0) {
       return response.status(404).json({
         success: false,
@@ -35,6 +26,7 @@ exports.getQuestionAnswers = async (request, response) => {
       });
     }
 
+    // Respond to client
     return response.status(200).json({
       success: true,
       data: { answers },

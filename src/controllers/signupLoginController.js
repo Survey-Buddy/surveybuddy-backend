@@ -61,6 +61,8 @@ exports.signup = async (request, response) => {
       newUser.email
     );
 
+    console.log("New user registered successfully");
+
     // Respond to client
     return response.status(201).json({
       success: true,
@@ -83,19 +85,19 @@ exports.signup = async (request, response) => {
 
 exports.login = async (request, response) => {
   // Get username and password from request
-  const { username, password } = request.body;
+  const { email, password } = request.body;
 
-  // Check if username and password exist
+  // Check if email and password exist
   try {
-    if (!username || !password) {
+    if (!email || !password) {
       return response.status(400).json({
         success: false,
-        message: "Username and password are required",
+        message: "email and password are required",
       });
     }
 
-    // Check if username exists in the DB
-    const user = await User.findOne({ username }).select(
+    // Check if email exists in the DB
+    const user = await User.findOne({ email }).select(
       "password _id username email"
     );
     if (!user) {
@@ -116,6 +118,8 @@ exports.login = async (request, response) => {
 
     // Generate new token
     const token = generateNewToken(user._id, user.username, user.email);
+
+    console.log("User logged in successfully");
 
     return response.status(201).json({
       success: true,

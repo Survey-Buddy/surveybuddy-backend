@@ -13,6 +13,25 @@ const surveySchema = new Schema({
     required: true,
     minLength: [5, "Survey description must be at least 5 characters long."],
   },
+  organisation: {
+    type: String,
+    required: false,
+    minLength: [3, "Survey organisation must be at least 3 characters long."],
+  },
+  respondents: {
+    type: String,
+    required: true,
+    enum: ["Work", "Research", "School", "Fun", "Other"],
+  },
+  purpose: {
+    type: String,
+    required: true,
+    enum: ["Public", "Registered", "Invite Only"],
+  },
+  completionDate: {
+    type: Date,
+    required: false,
+  },
   date: {
     type: Date,
     default: Date.now,
@@ -23,14 +42,6 @@ const surveySchema = new Schema({
     ref: "User",
     required: [true, "userId is  required"],
   },
-  //   questionCount: {
-  //     type: Number,
-  //     required: [
-  //       true,
-  //       "Survey must have a specific number of questions on submit.",
-  //     ],
-  //     min: [1, "Survey must have at least 1 question."],
-  //   },
 });
 
 const Survey = mongoose.model("Survey", surveySchema);
