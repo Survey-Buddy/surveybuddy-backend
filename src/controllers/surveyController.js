@@ -74,7 +74,14 @@ exports.getSpecificSurvey = async (request, response) => {
 // Create New Survey
 
 exports.newSurvey = async (request, response) => {
-  const { name, description } = request.body;
+  const {
+    name,
+    description,
+    respondents,
+    purpose,
+    completionDate,
+    organisation,
+  } = request.body;
 
   try {
     const userId = request.user?.userId;
@@ -97,10 +104,16 @@ exports.newSurvey = async (request, response) => {
     const newSurvey = new Survey({
       name,
       description,
+      respondents,
+      purpose,
+      completionDate,
+      organisation,
       userId: userId,
       date: new Date(),
     });
     await newSurvey.save();
+
+    console.log(newSurvey);
 
     // Respond to client
     return response.status(201).json({

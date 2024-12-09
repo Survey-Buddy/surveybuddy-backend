@@ -10,7 +10,7 @@ const surveySchema = new Schema({
   },
   description: {
     type: String,
-    required: true,
+    required: false,
     minLength: [5, "Survey description must be at least 5 characters long."],
   },
   organisation: {
@@ -20,13 +20,14 @@ const surveySchema = new Schema({
   },
   respondents: {
     type: String,
-    required: true,
-    enum: ["Work", "Research", "School", "Fun", "Other"],
+    required: false,
+    default: "public",
+    enum: ["public", "registered", "inviteOnly"],
   },
   purpose: {
     type: String,
     required: true,
-    enum: ["Public", "Registered", "Invite Only"],
+    enum: ["work", "research", "school", "fun", "other"],
   },
   completionDate: {
     type: Date,
