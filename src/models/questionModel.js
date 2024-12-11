@@ -8,23 +8,27 @@ const questionSchema = new Schema({
     ref: "Survey",
     required: [true, "Survey is  required."],
   },
-  questionNumber: {
+  questionNum: {
     type: Number,
     required: [true, "Survey number is required."],
     trim: true,
   },
   questionFormat: {
     type: String,
-    enum: ["multiChoice", "range", "writtenResponse"],
+    enum: ["multiChoice", "rangeSlider", "writtenResponse"],
+    default: "writtenResponse",
     required: [true, "Question format is required."],
   },
   question: {
     type: String,
     required: [true, "A question is required."],
     trim: true,
+    minLength: [5, "Question must be at least 5 characters long."],
   },
-  answer: {
+  rangeDescription: {
     type: String,
+    enum: ["no", "notAtAll", "disagree"],
+    default: "notAtAll",
     trim: true,
   },
 });

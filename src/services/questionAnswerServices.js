@@ -7,7 +7,7 @@ exports.validateQAndAs = async (request, response, next) => {
     const { answer } = request.body;
     const { questionId } = request.params;
 
-    let questionFormat = request.body.questionFormat;
+    let { questionFormat } = request.body;
 
     // If no question format, fetch and assign value
     if (!questionFormat) {
@@ -31,7 +31,7 @@ exports.validateQAndAs = async (request, response, next) => {
 
     // Define valid types of Questions and Answers
     const validQuestions = ["multiChoice", "range", "writtenResponse"];
-    const validChoices = ["a", "b", "c", "d"];
+    const validChoices = ["answerA", "answerB", "answerC", "answerD"];
     const validRange = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
     // Validate question type
@@ -68,7 +68,10 @@ exports.validateQAndAs = async (request, response, next) => {
         message: "Multi-choice answers must be one of: A, B, C, or D.",
       });
     }
-    if (questionFormat === "range" && !validRange.includes(normalisedAnswer)) {
+    if (
+      questionFormat === "rangeSlider" &&
+      !validRange.includes(normalisedAnswer)
+    ) {
       return response.status(400).json({
         success: false,
         message: "Range answers must be between 1 and 10.",

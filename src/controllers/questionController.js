@@ -1,5 +1,6 @@
 const { Question } = require("../models/questionModel");
 const { checkIsValidObjectId } = require("../services/mongooseServices");
+const mongoose = require("mongoose");
 
 // Get all questions from a specific survey
 
@@ -38,6 +39,7 @@ exports.getQuestions = async (request, response) => {
       });
     }
 
+    console.log(questions);
     return response.status(200).json({
       success: true,
       data: questions,
@@ -89,10 +91,10 @@ exports.getQuestion = async (request, response) => {
 };
 
 exports.newQuestion = async (request, response) => {
-  const { questionNumber, questionFormat, question, answer } = request.body;
+  const { questionNum, questionFormat, question, answer } = request.body;
   const { surveyId } = request.params;
 
-  if (!surveyId || !questionNumber || !questionFormat || !question || !answer) {
+  if (!surveyId || !questionFormat || !question) {
     return response.status(400).json({
       success: false,
       message: "Missing required field to create question.",
@@ -101,12 +103,14 @@ exports.newQuestion = async (request, response) => {
   try {
     const newQuestion = await new Question({
       surveyId,
-      questionNumber,
+      questionNum,
       questionFormat,
       question,
       answer,
     });
     await newQuestion.save();
+
+    console.log("Question successfully created.");
 
     return response.status(201).json({
       success: true,
