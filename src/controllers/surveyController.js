@@ -81,6 +81,7 @@ exports.newSurvey = async (request, response) => {
     purpose,
     completionDate,
     organisation,
+    endDate,
   } = request.body;
 
   try {
@@ -108,6 +109,7 @@ exports.newSurvey = async (request, response) => {
       purpose,
       completionDate,
       organisation,
+      endDate,
       userId: userId,
       date: new Date(),
     });

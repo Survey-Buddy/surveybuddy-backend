@@ -7,7 +7,9 @@ const PORT = process.env.PORT || 3000;
 
 // Connect to server
 
-app.listen(PORT, async () => {
-  await dbConnect();
-  console.log("Server is running on port:" + PORT);
-});
+if (process.env.NOVE_ENV !== "test") {
+  app.listen(PORT, async () => {
+    await dbConnect();
+    console.log("Server is running on port:" + PORT);
+  });
+}

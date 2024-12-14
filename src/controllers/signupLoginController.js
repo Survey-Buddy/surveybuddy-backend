@@ -121,7 +121,7 @@ exports.login = async (request, response) => {
 
     console.log("User logged in successfully");
 
-    return response.status(201).json({
+    return response.status(200).json({
       success: true,
       userId: user._id,
       username: user.username,

@@ -10,8 +10,30 @@ lerna-debug.log*
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
+# Node.js
+node_modules/
+npm-debug.log*
+
 # Environment variables
 .env
+.env.test
+.env.*
+
+# Coverage and Jest artifacts
+coverage/
+.jest/
+
+# Local MongoDB database files
+/path/to/local-mongo-db/*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
 
 # Runtime data
 pids

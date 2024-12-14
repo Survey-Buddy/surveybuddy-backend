@@ -29,7 +29,7 @@ const surveySchema = new Schema({
     required: true,
     enum: ["work", "research", "school", "fun", "other"],
   },
-  completionDate: {
+  endDate: {
     type: Date,
     required: false,
   },

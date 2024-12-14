@@ -50,9 +50,9 @@ function decodeJWT(token) {
 
 // Function to validate JWT
 
-async function authMiddleware(request, response, next) {
-  next();
-}
+// async function authMiddleware(request, response, next) {
+//   next();
+// }
 
 async function authMiddleware(request, response, next) {
   try {

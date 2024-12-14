@@ -4,6 +4,7 @@ const { signup, login } = require("../controllers/signupLoginController");
 const { editUser, deleteUser } = require("../controllers/userController");
 
 // Signup Login Router Routes
+// Prefix http://localhost:8080/users
 
 router.post("/signup", signup);
 router.post("/login", login);
