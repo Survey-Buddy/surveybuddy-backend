@@ -28,7 +28,7 @@ let corsOptions = {
     "http://localhost:3000", // Backend Local
     "http://localhost:5173", // Client Local
     "http://127.0.0.1:5173", // Client Local
-    "https://deployedreactapp.com", // Deployed App
+    "https://surveybuddy.netlify.app", // Deployed App
   ],
   methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],

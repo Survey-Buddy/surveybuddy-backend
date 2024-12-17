@@ -12,6 +12,7 @@ const { authMiddleware } = require("../functions/jwtFunctions");
 const { isCreator } = require("../services/rolesServices");
 const { Question } = require("../models/questionModel");
 const answerRoutes = require("../routes/answerRoutes");
+const { formatQuestionMiddleware } = require("../services/questionFormat");
 
 // Nested child routes
 

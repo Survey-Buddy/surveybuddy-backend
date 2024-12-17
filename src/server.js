@@ -23,10 +23,15 @@ app.use(helmetConfig());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/api/health", (request, response) => {
+  response.status(200).json({ status: "ok" });
+});
+
 // Middleware Router Routes
 
 app.use("/users", userRoutes);
 app.use("/surveys", surveyRoutes);
+// app.use("/answers", answerRoutes);
 
 // Test route
 

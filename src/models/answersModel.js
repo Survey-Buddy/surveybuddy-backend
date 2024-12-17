@@ -8,13 +8,15 @@ const answerSchema = new Schema({
     ref: "Question",
     required: true,
   },
-  submittedAt: {
+  submitted: {
     type: Date,
     default: Date.now,
     required: true,
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
+    default: "Unregistered user",
+    required: false,
   },
   answer: {
     type: mongoose.Schema.Types.Mixed,

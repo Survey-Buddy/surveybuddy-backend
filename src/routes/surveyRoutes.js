@@ -26,8 +26,8 @@ router.get("/", authMiddleware, getAllSurveys);
 // Get specific survey
 router.get(
   "/:surveyId",
-  authMiddleware,
-  isCreator(Survey, "surveyId"),
+  // authMiddleware,
+  // isCreator(Survey, "surveyId"),
   getSpecificSurvey
 );
 
