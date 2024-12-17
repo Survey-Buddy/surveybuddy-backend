@@ -8,7 +8,7 @@ const answerSchema = new Schema({
     ref: "Question",
     required: true,
   },
-  submittedAt: {
+  submitted: {
     type: Date,
     default: Date.now,
     required: true,

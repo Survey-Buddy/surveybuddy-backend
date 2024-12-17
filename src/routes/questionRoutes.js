@@ -30,7 +30,7 @@ router.get("/:questionId", getQuestion);
 
 // Create a new question for a specific survey
 
-router.post("/", authMiddleware, formatQuestionMiddleware, newQuestion);
+router.post("/", authMiddleware, newQuestion);
 // router.post("/", authMiddleware, validateQAndAs, newQuestion);
 // router.post("/", newQuestion);
 

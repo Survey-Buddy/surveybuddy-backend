@@ -31,6 +31,7 @@ app.get("/api/health", (request, response) => {
 
 app.use("/users", userRoutes);
 app.use("/surveys", surveyRoutes);
+// app.use("/answers", answerRoutes);
 
 // Test route
 

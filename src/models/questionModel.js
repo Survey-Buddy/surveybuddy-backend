@@ -36,7 +36,7 @@ const questionSchema = new Schema({
           );
         }
         if (this.questionFormat === "rangeSlider") {
-          return value.rangeDescription;
+          return value.rangeDescription && typeof value.max === "number";
         }
         return true;
       },
