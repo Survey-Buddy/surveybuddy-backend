@@ -91,7 +91,7 @@ exports.getQuestion = async (request, response) => {
 };
 
 exports.newQuestion = async (request, response) => {
-  const { questionNum, questionFormat, question, answer } = request.body;
+  const { questionNum, questionFormat, question, formatDetails } = request.body;
   const { surveyId } = request.params;
 
   if (!surveyId || !questionFormat || !question) {
@@ -106,11 +106,11 @@ exports.newQuestion = async (request, response) => {
       questionNum,
       questionFormat,
       question,
-      answer,
+      formatDetails,
     });
     await newQuestion.save();
 
-    console.log("Question successfully created.");
+    console.log("Question successfully created: ", newQuestion);
 
     return response.status(201).json({
       success: true,

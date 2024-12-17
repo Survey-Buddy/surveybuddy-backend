@@ -23,9 +23,15 @@ exports.getAllSurveys = async (request, response) => {
       });
     }
 
+    const formattedSurveys = userSurveys.map((survey) => ({
+      ...survey.toObject(),
+      date: survey.date.toISOString(),
+      endDate: survey.date.toISOString() || "",
+    }));
+
     return response.status(200).json({
       success: true,
-      data: userSurveys,
+      data: formattedSurveys,
     });
   } catch (error) {
     console.error("Error fetching user surveys:", error);
@@ -79,7 +85,7 @@ exports.newSurvey = async (request, response) => {
     description,
     respondents,
     purpose,
-    completionDate,
+    active,
     organisation,
     endDate,
   } = request.body;
@@ -104,14 +110,14 @@ exports.newSurvey = async (request, response) => {
     // Create and save new Survey
     const newSurvey = new Survey({
       name,
+      active,
       description,
       respondents,
       purpose,
-      completionDate,
       organisation,
-      endDate,
       userId: userId,
-      date: new Date(),
+      // If undefined it defaults to schema default + 1yr
+      endDate: endDate || undefined,
     });
     await newSurvey.save();
 
@@ -121,7 +127,16 @@ exports.newSurvey = async (request, response) => {
     return response.status(201).json({
       success: true,
       message: "Survey created succssfully.",
-      survey: newSurvey,
+      name: newSurvey.name,
+      active: newSurvey.active,
+      description: newSurvey.description,
+      respondents: newSurvey.respondents,
+      purpose: newSurvey.purpose,
+      organisation: newSurvey.organisation,
+      userId: newSurvey.userId,
+      endDate: newSurvey.endDate,
+      date: new Date().toISOString(),
+      _id: newSurvey._id,
     });
   } catch (error) {
     console.error("Error creating new survey", error);
@@ -132,7 +147,7 @@ exports.newSurvey = async (request, response) => {
 // Edit Survey (PATCH)
 
 exports.editSurvey = async (request, response) => {
-  const { name, description } = request.body;
+  const { name, description, organisation, purpose, endDate } = request.body;
   const { surveyId } = request.params;
 
   if (!surveyId) {
@@ -152,6 +167,9 @@ exports.editSurvey = async (request, response) => {
   const fieldsToUpdate = {};
   if (name) fieldsToUpdate.name = name;
   if (description) fieldsToUpdate.description = description;
+  if (organisation) fieldsToUpdate.organisation = organisation;
+  if (endDate) fieldsToUpdate.endDate = endDate;
+  if (purpose) fieldsToUpdate.purpose = purpose;
 
   // If no fields to update
   if (Object.keys(fieldsToUpdate).length === 0) {
@@ -166,7 +184,13 @@ exports.editSurvey = async (request, response) => {
     const updatedSurvey = await Survey.findByIdAndUpdate(
       surveyId,
       // Only include truthy values in update
-      { ...(name && { name }), ...(description && { description }) },
+      {
+        ...(name && { name }),
+        ...(description && { description }),
+        ...(organisation && { organisation }),
+        ...(purpose && { purpose }),
+        ...(endDate && { endDate }),
+      },
       // Enforce schema validation rules (minLength etc)
       { new: true, runValidators: true }
     );

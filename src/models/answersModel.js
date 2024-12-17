@@ -15,6 +15,8 @@ const answerSchema = new Schema({
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
+    default: "Unregistered user",
+    required: false,
   },
   answer: {
     type: mongoose.Schema.Types.Mixed,

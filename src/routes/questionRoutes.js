@@ -12,6 +12,7 @@ const { authMiddleware } = require("../functions/jwtFunctions");
 const { isCreator } = require("../services/rolesServices");
 const { Question } = require("../models/questionModel");
 const answerRoutes = require("../routes/answerRoutes");
+const { formatQuestionMiddleware } = require("../services/questionFormat");
 
 // Nested child routes
 
@@ -29,7 +30,7 @@ router.get("/:questionId", getQuestion);
 
 // Create a new question for a specific survey
 
-router.post("/", authMiddleware, newQuestion);
+router.post("/", authMiddleware, formatQuestionMiddleware, newQuestion);
 // router.post("/", authMiddleware, validateQAndAs, newQuestion);
 // router.post("/", newQuestion);
 

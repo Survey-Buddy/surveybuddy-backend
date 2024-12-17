@@ -24,18 +24,30 @@ const surveySchema = new Schema({
     default: "public",
     enum: ["public", "registered", "inviteOnly"],
   },
+  active: {
+    type: Boolean,
+    default: true,
+    required: true,
+  },
   purpose: {
     type: String,
     required: true,
     enum: ["work", "research", "school", "fun", "other"],
   },
   endDate: {
-    type: Date,
-    required: false,
+    type: String,
+    default: () => {
+      const currentDate = new Date();
+      const oneYearFromCreate = new Date(
+        currentDate.setFullYear(currentDate.getFullYear() + 1)
+      );
+      return oneYearFromCreate.toISOString();
+    },
+    required: true,
   },
   date: {
     type: Date,
-    default: Date.now,
+    default: () => new Date().toISOString(),
     required: true,
   },
   userId: {

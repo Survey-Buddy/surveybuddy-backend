@@ -10,7 +10,7 @@ const questionSchema = new Schema({
   },
   questionNum: {
     type: Number,
-    required: [true, "Survey number is required."],
+    required: [true, "Question number is required."],
     trim: true,
   },
   questionFormat: {
@@ -25,11 +25,23 @@ const questionSchema = new Schema({
     trim: true,
     minLength: [5, "Question must be at least 5 characters long."],
   },
-  rangeDescription: {
-    type: String,
-    enum: ["no", "notAtAll", "disagree"],
-    default: "notAtAll",
-    trim: true,
+  formatDetails: {
+    type: Schema.Types.Mixed,
+    default: {},
+    validate: {
+      validator: function (value) {
+        if (this.questionFormat === "multiChoice") {
+          return (
+            value.answerA && value.answerB && value.answerC && value.answerD
+          );
+        }
+        if (this.questionFormat === "rangeSlider") {
+          return value.rangeDescription;
+        }
+        return true;
+      },
+      message: "Invalid formatDetails for the specified questionFormat.",
+    },
   },
 });
 

@@ -5,6 +5,7 @@ const { Survey } = require("../../src/models/surveyModel");
 const { User } = require("../../src/models/userModel");
 const { generateNewToken } = require("../../src/functions/jwtFunctions");
 
+// Initiate globally so can access through file
 let userToken;
 let userId;
 
@@ -12,15 +13,17 @@ let userId;
 beforeAll(async () => {
   await mongoose.connection.dropDatabase();
 
+  // Create test user to test surveys with
   const testUser = await User.create({
     firstName: "Test",
     lastName: "User",
     username: "testuser",
     email: "test@user.com",
-    password: "hashedpassword", // Simulate hashed password
+    password: "hashedpassword",
   });
-
+  // Get user id from new testUser object
   userId = testUser._id;
+  // Generate new token for testUser
   userToken = generateNewToken(userId, testUser.username, testUser.email);
 });
 
@@ -32,29 +35,31 @@ afterAll(async () => {
 // Test: GET /surveys
 describe("GET /surveys", () => {
   beforeAll(async () => {
+    // Create surveys for testUser
     await Survey.create([
       { name: "Survey 1", description: "Desc 1", purpose: "work", userId },
       { name: "Survey 2", description: "Desc 2", purpose: "school", userId },
     ]);
   });
 
-  it("should return all surveys for the authenticated user", async () => {
+  it("should return all surveys for the logged in user", async () => {
     const response = await request(app)
       .get("/surveys")
       .set("Authorization", `Bearer ${userToken}`);
-
+    // Expect the 2 previously created surveys and a 200 status code
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.data).toHaveLength(2);
   });
 
+  // Delete all surveys
   it("should return 404 if no surveys exist for the user", async () => {
+    // Delete all from Survey model
     await Survey.deleteMany();
-
     const response = await request(app)
       .get("/surveys")
       .set("Authorization", `Bearer ${userToken}`);
-
+    // No surveys found and 404 status code
     expect(response.status).toBe(404);
     expect(response.body.message).toBe("No surveys found for this user.");
   });
@@ -63,7 +68,7 @@ describe("GET /surveys", () => {
 // Test: GET /surveys/:surveyId
 describe("GET /surveys/:surveyId", () => {
   let surveyId;
-
+  // Create a survey to test
   beforeAll(async () => {
     const survey = await Survey.create({
       name: "Specific Survey",
@@ -71,6 +76,7 @@ describe("GET /surveys/:surveyId", () => {
       purpose: "research",
       userId,
     });
+    // Assign the survey _id to surveyId
     surveyId = survey._id;
   });
 
@@ -78,7 +84,7 @@ describe("GET /surveys/:surveyId", () => {
     const response = await request(app)
       .get(`/surveys/${surveyId}`)
       .set("Authorization", `Bearer ${userToken}`);
-
+    // Return the above Specific survey name and 200 status code
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.data.name).toBe("Specific Survey");
