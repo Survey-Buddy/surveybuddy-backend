@@ -62,17 +62,10 @@ exports.getSurveyAnswers = async (request, response) => {
           localField: "_id", // Field in question model to match
           foreignField: "questionId", // Field in answer model to match
           as: "answers", // Output array name
+          pipeline: [{ $limit: 100 }], // Limit results
         },
       },
     ]);
-
-    // const answers = await Answer.find({ questionId: questions._id });
-    if (!questionsWithAnswers) {
-      return response.status(404).json({
-        success: false,
-        message: "There are no questionsWithAnswers for this survey.",
-      });
-    }
 
     if (questionsWithAnswers.length === 0) {
       return response.status(404).json({
@@ -94,18 +87,23 @@ exports.getSurveyAnswers = async (request, response) => {
   }
 };
 
-// POST - Answers created by any unregistered user
+// POST - Answer created by any unregistered user
 
 exports.newAnswer = async (request, response) => {
-  const { answer } = request.body;
+  const validatedAnswer = request.body.validatedAnswer;
   const { surveyId, questionId } = request.params;
 
-  if (!surveyId || !questionId || !answer) {
+  console.log(validatedAnswer);
+
+  if (!surveyId || !questionId || !validatedAnswer) {
     return response.status(400).json({
       success: false,
-      message: "Missing required field: surveyId, questionId or answer.",
+      message:
+        "Missing required field: surveyId, questionId, or validatedAnswer.",
     });
   }
+
+  const answer = validatedAnswer;
 
   try {
     const newAnswer = await new Answer({
