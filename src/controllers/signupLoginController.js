@@ -58,7 +58,9 @@ exports.signup = async (request, response) => {
     const token = generateNewToken(
       newUser._id,
       newUser.username,
-      newUser.email
+      newUser.email,
+      newUser.firstName,
+      newUser.lastName
     );
 
     console.log("New user registered successfully");
@@ -117,7 +119,13 @@ exports.login = async (request, response) => {
     }
 
     // Generate new token
-    const token = generateNewToken(user._id, user.username, user.email);
+    const token = generateNewToken(
+      user._id,
+      user.username,
+      user.email,
+      user.firstName,
+      user.lastName
+    );
 
     console.log("User logged in successfully");
 

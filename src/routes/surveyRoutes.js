@@ -27,7 +27,7 @@ router.get("/:surveyId", getSpecificSurvey);
 
 // Create new survey
 
-router.post("/", newSurvey);
+router.post("/", authMiddleware, newSurvey);
 
 // Update survey
 

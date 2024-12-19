@@ -10,27 +10,28 @@ if (!jwtSecretKey) {
 
 // Function to generate a new JWT
 
-function generateNewToken(userId, username, email) {
-  if (!userId || !username || !email) {
-    throw new Error("UserId or Username is missing.");
+function generateNewToken(userId, username, email, firstName, lastName) {
+  if (!userId || !username || !email || !firstName || !lastName) {
+    throw new Error("Missing required fields for token generation.");
   }
 
   try {
     const token = jwt.sign(
       {
-        userId: userId,
-        username: username,
-        email: email,
+        userId,
+        username,
+        email,
+        firstName,
+        lastName,
       },
       jwtSecretKey,
       {
-        expiresIn: "7d", // Expires in 7 days
+        expiresIn: "7d",
       }
     );
-
     return token;
   } catch (error) {
-    console.error("Error generating new JWT:", error);
+    console.error("Error generating JWT:", error);
     throw new Error("Failed to generate token.");
   }
 }
