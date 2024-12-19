@@ -20,7 +20,7 @@ router.use("/:surveyId/questions", questionRoutes);
 // Surveys Router Routes ( /surveys )
 
 // Get all User created surveys
-router.get("/", getAllSurveys);
+router.get("/", authMiddleware, getAllSurveys);
 
 // Get specific survey
 router.get(
@@ -31,7 +31,7 @@ router.get(
 );
 
 // Create new survey
-router.post("/", authMiddleware, newSurvey);
+router.post("/", newSurvey);
 
 // Update survey
 router.patch(
