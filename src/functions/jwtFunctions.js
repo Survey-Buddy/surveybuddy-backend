@@ -58,13 +58,15 @@ async function authMiddleware(request, response, next) {
   try {
     const token = request.headers.authorization?.split(" ")[1];
     if (!token) {
+      console.log("No token provided in the header.");
       return response.status(403).json({
         message: "Sign in to view this content.",
       });
     }
 
     // Add decoded data to request object for use in subsequent middleware
-    let decodedData = decodeJWT(token);
+    const decodedData = decodeJWT(token);
+    console.log("Decoded JWT data:", decodedData);
 
     request.user = decodedData;
 

@@ -17,23 +17,20 @@ const answerRoutes = require("../routes/answerRoutes");
 
 router.use("/:surveyId/questions", questionRoutes);
 
-// Surveys Router Routes ( /surveys )
-
 // Get all User created surveys
+
 router.get("/", authMiddleware, getAllSurveys);
 
 // Get specific survey
-router.get(
-  "/:surveyId",
-  // authMiddleware,
-  // isCreator(Survey, "surveyId"),
-  getSpecificSurvey
-);
+
+router.get("/:surveyId", getSpecificSurvey);
 
 // Create new survey
+
 router.post("/", newSurvey);
 
 // Update survey
+
 router.patch(
   "/:surveyId/editSurvey",
   authMiddleware,
@@ -42,6 +39,7 @@ router.patch(
 );
 
 // Delete survey
+
 router.delete(
   "/:surveyId/deleteSurvey",
   authMiddleware,
