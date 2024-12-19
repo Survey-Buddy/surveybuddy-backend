@@ -16,7 +16,6 @@ const answerRoutes = require("../routes/answerRoutes");
 // Nested question child routes
 
 router.use("/:surveyId/questions", questionRoutes);
-// router.use("/:surveyId/answers", answerRoutes);
 
 // Surveys Router Routes ( /surveys )
 
