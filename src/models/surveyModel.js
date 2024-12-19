@@ -31,7 +31,7 @@ const surveySchema = new Schema({
   },
   purpose: {
     type: String,
-    required: true,
+    required: false,
     enum: ["work", "research", "school", "fun", "other"],
   },
   endDate: {
