@@ -21,7 +21,7 @@ router.use("/:surveyId/questions", questionRoutes);
 // Surveys Router Routes ( /surveys )
 
 // Get all User created surveys
-router.get("/", authMiddleware, getAllSurveys);
+router.get("/", getAllSurveys);
 
 // Get specific survey
 router.get(

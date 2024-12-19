@@ -16,8 +16,6 @@ const { formatQuestionMiddleware } = require("../services/questionFormat");
 
 // Nested child routes
 
-// router.use("/:questionId/answers", answerRoutes);
-
 // Question Router Paths - prefix: '/surveys/:surveyId/questions'
 
 // Get all questions for a specific survey
