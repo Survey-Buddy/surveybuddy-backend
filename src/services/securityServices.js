@@ -25,10 +25,10 @@ const helmetConfig = () => {
 
 let corsOptions = {
   origin: [
-    "http://localhost:3000", // Backend Local
-    "http://localhost:5173", // Client Local
+    "http://localhost:3000", // Create React App Local
+    "http://localhost:5173", // Vite Local
     "http://127.0.0.1:5173", // Client Local
-    "https://surveybuddy.netlify.app", // Deployed App
+    "https://surveybuddy.netlify.app", // Deployed React App
   ],
   methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],

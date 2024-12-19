@@ -8,6 +8,7 @@ dotenv.config();
 
 const userRoutes = require("./routes/userRoutes");
 const surveyRoutes = require("./routes/surveyRoutes");
+const answerRoutes = require("./routes/answerRoutes");
 
 // Initialise express app
 
@@ -31,7 +32,7 @@ app.get("/api/health", (request, response) => {
 
 app.use("/users", userRoutes);
 app.use("/surveys", surveyRoutes);
-// app.use("/answers", answerRoutes);
+app.use("/answers", answerRoutes);
 
 // Test route
 

@@ -13,43 +13,42 @@ const {
 const { checkUserAuthorisaton } = require("../services/authServices");
 const { authMiddleware } = require("../functions/jwtFunctions");
 const { isCreator } = require("../services/rolesServices");
+const { validateAnswer } = require("../services/answerFormatting");
 
-// prefix: '/surveys/:surveyId/answers'
+// prefix: '/answers'
 
 // Answers Router Paths
 // Answers cannot be edited by anyone
-// Answers can only be deleted by a manager
+// Answers cannot be deleted unless the question and survey are deleted
 
 // Get All Question Answers
 
 router.get(
-  "/:questionId",
+  "/:surveyId/:questionId",
   authMiddleware,
   //   isCreator,
-  validateQAndAs,
-  questionBelongsToSurvey,
+  // validateQAndAs,
+  // questionBelongsToSurvey,
   getQuestionAnswers
 );
 
 // Get All Survey Answers
 
-router.get("/", authMiddleware, getSurveyAnswers);
+router.get("/:surveyId", authMiddleware, getSurveyAnswers);
 
-// Unregistered User Answers
+// New Unregistered Answer
 
-router.post("/:questionId", validateQAndAs, questionBelongsToSurvey, newAnswer);
+router.post("/:surveyId/:questionId", validateAnswer, newAnswer);
 
-// Registered User Answers
+// Registered User Answers || Currently inactive
 
-router.post(
-  "/:questionId/registeredAnswer",
-  authMiddleware,
-  validateQAndAs,
-  questionBelongsToSurvey,
-  newRegisteredAnswer
-);
-
-// router.delete("/deleteAnswer", answerController.deleteAnswers);
+// router.post(
+//   "/:surveyId/:questionNum",
+//   authMiddleware,
+//   validateQAndAs,
+//   questionBelongsToSurvey,
+//   newRegisteredAnswer
+// );
 
 // Route for tracked survey results - only one set of answers per assigned respondent
 // router.post("/newTrackedAnswer/:userId", checkUser, answerController.newTrackedAnswer)

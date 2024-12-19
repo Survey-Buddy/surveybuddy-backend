@@ -16,12 +16,11 @@ const answerRoutes = require("../routes/answerRoutes");
 // Nested question child routes
 
 router.use("/:surveyId/questions", questionRoutes);
-router.use("/:surveyId/answers", answerRoutes);
 
 // Surveys Router Routes ( /surveys )
 
 // Get all User created surveys
-router.get("/", authMiddleware, getAllSurveys);
+router.get("/", getAllSurveys);
 
 // Get specific survey
 router.get(
