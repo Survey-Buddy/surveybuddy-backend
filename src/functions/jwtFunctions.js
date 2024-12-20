@@ -10,8 +10,8 @@ if (!jwtSecretKey) {
 
 // Function to generate a new JWT
 
-function generateNewToken(userId, username, email, firstName, lastName) {
-  if (!userId || !username || !email || !firstName || !lastName) {
+function generateNewToken(userId, username, email) {
+  if (!userId || !username || !email) {
     throw new Error("Missing required fields for token generation.");
   }
 
@@ -21,8 +21,8 @@ function generateNewToken(userId, username, email, firstName, lastName) {
         userId,
         username,
         email,
-        firstName,
-        lastName,
+        // firstName,
+        // lastName,
       },
       jwtSecretKey,
       {
