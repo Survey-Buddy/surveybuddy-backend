@@ -12,6 +12,7 @@ const userSchema = new Schema({
   },
   lastName: {
     type: String,
+    required: true,
     trim: true,
     minLength: [3, "First name must be at least 3 characters long."],
   },

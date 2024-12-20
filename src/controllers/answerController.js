@@ -58,7 +58,7 @@ exports.getSurveyAnswers = async (request, response) => {
       { $match: { surveyId: new mongoose.Types.ObjectId(surveyId) } },
       {
         $lookup: {
-          from: "answers", // Collect to join with
+          from: "answers", // Collection to join with
           localField: "_id", // Field in question model to match
           foreignField: "questionId", // Field in answer model to match
           as: "answers", // Output array name
@@ -93,8 +93,6 @@ exports.newAnswer = async (request, response) => {
   const validatedAnswer = request.body.validatedAnswer;
   const { surveyId, questionId } = request.params;
 
-  console.log(validatedAnswer);
-
   if (!surveyId || !questionId || !validatedAnswer) {
     return response.status(400).json({
       success: false,
@@ -126,46 +124,46 @@ exports.newAnswer = async (request, response) => {
   }
 };
 
-// POST - Answers created by tracked registered users
+// POST - Answers created by tracked registered users || Inactive
 
-exports.newRegisteredAnswer = async (request, response) => {
-  const { answer } = request.body;
-  const { surveyId, questionId } = request.params;
-  const { userId } = request.user?.userId;
+// exports.newRegisteredAnswer = async (request, response) => {
+//   const { answer } = request.body;
+//   const { surveyId, questionId } = request.params;
+//   const { userId } = request.user?.userId;
 
-  if (!userId) {
-    return response.status(400).json({
-      success: false,
-      message:
-        "Missing required field: userId. You must be logged in to perform this request.",
-    });
-  }
+//   if (!userId) {
+//     return response.status(400).json({
+//       success: false,
+//       message:
+//         "Missing required field: userId. You must be logged in to perform this request.",
+//     });
+//   }
 
-  if (!surveyId || !questionId || !answer) {
-    return response.status(400).json({
-      success: false,
-      message: "Missing required field: surveyId, questionId or answer",
-    });
-  }
+//   if (!surveyId || !questionId || !answer) {
+//     return response.status(400).json({
+//       success: false,
+//       message: "Missing required field: surveyId, questionId or answer",
+//     });
+//   }
 
-  try {
-    const newAnswer = await new Answer({
-      surveyId,
-      questionId,
-      userId,
-      answer,
-    });
+//   try {
+//     const newAnswer = await new Answer({
+//       surveyId,
+//       questionId,
+//       userId,
+//       answer,
+//     });
 
-    return response.status(201).json({
-      success: true,
-      message: "Registered user answer created successfully.",
-      answer: newAnswer,
-    });
-  } catch (error) {
-    console.error("Error creating registered answer:", error);
-    return response.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
-};
+//     return response.status(201).json({
+//       success: true,
+//       message: "Registered user answer created successfully.",
+//       answer: newAnswer,
+//     });
+//   } catch (error) {
+//     console.error("Error creating registered answer:", error);
+//     return response.status(500).json({
+//       success: false,
+//       message: "Internal server error",
+//     });
+//   }
+// };

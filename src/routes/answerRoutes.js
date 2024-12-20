@@ -19,7 +19,7 @@ const { validateAnswer } = require("../services/answerFormatting");
 
 // Answers Router Paths
 // Answers cannot be edited by anyone
-// Answers cannot be deleted unless the question and survey are deleted
+// Answers cannot be deleted
 
 // Get All Question Answers
 
@@ -40,7 +40,7 @@ router.get("/:surveyId", authMiddleware, getSurveyAnswers);
 
 router.post("/:surveyId/:questionId", validateAnswer, newAnswer);
 
-// Registered User Answers || Currently inactive
+// Registered User Answers
 
 // router.post(
 //   "/:surveyId/:questionNum",

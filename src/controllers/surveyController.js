@@ -144,7 +144,7 @@ exports.newSurvey = async (request, response) => {
   }
 };
 
-// Edit Survey (PATCH)
+// Edit Survey
 
 exports.editSurvey = async (request, response) => {
   const { name, description, organisation, purpose, endDate } = request.body;
@@ -214,7 +214,7 @@ exports.editSurvey = async (request, response) => {
   }
 };
 
-// Delete Survey Path (DELETE)
+// Delete Survey Path
 
 exports.deleteSurvey = async (request, response) => {
   const { surveyId } = request.params;

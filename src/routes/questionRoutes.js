@@ -7,14 +7,12 @@ const {
   getQuestion,
   getQuestions,
 } = require("../controllers/questionController");
-const { validateQAndAs } = require("../services/questionAnswerServices");
 const { authMiddleware } = require("../functions/jwtFunctions");
-const { isCreator } = require("../services/rolesServices");
-const { Question } = require("../models/questionModel");
-const answerRoutes = require("../routes/answerRoutes");
-const { formatQuestionMiddleware } = require("../services/questionFormat");
-
-// Nested child routes
+const { validateQAndAs } = require("../services/questionAnswerServices");
+// const { isCreator } = require("../services/rolesServices");
+// const { Question } = require("../models/questionModel");
+// const answerRoutes = require("../routes/answerRoutes");
+// const { formatQuestionMiddleware } = require("../services/questionFormat");
 
 // Question Router Paths - prefix: '/surveys/:surveyId/questions'
 
@@ -22,32 +20,30 @@ const { formatQuestionMiddleware } = require("../services/questionFormat");
 
 router.get("/", getQuestions);
 
-// Get specific questions
+// Get specific question
 
 router.get("/:questionId", getQuestion);
 
 // Create a new question for a specific survey
 
 router.post("/", authMiddleware, newQuestion);
-// router.post("/", authMiddleware, validateQAndAs, newQuestion);
-// router.post("/", newQuestion);
 
 // Update a question for a specific survey
 
-router.patch(
-  "/:questionId/editQuestion",
-  authMiddleware,
-  isCreator(Question, "questionId"),
-  editQuestion
-);
+// router.patch(
+//   "/:questionId/editQuestion",
+//   authMiddleware,
+//   isCreator(Question, "questionId"),
+//   editQuestion
+// );
 
 // Delete a question from a specific survey
 
-router.delete(
-  "/:questionId/deleteQuestion",
-  authMiddleware,
-  isCreator(Question, "questionId"),
-  deleteQuestion
-);
+// router.delete(
+//   "/:questionId/deleteQuestion",
+//   authMiddleware,
+//   isCreator(Question, "questionId"),
+//   deleteQuestion
+// );
 
 module.exports = router;

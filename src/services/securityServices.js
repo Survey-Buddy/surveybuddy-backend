@@ -25,6 +25,7 @@ const helmetConfig = () => {
 
 let corsOptions = {
   origin: [
+    "https://surveybuddy.tech", // Custom Domain Name
     "http://localhost:3000", // Create React App Local
     "http://localhost:5173", // Vite Local
     "http://127.0.0.1:5173", // Client Local

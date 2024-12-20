@@ -69,6 +69,7 @@ exports.signup = async (request, response) => {
     return response.status(201).json({
       success: true,
       message: "User created successfully.",
+      username: newUser.username,
       firstName: newUser.firstName,
       lastName: newUser.lastName,
       token: token,
