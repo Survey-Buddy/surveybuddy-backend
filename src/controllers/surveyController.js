@@ -147,7 +147,8 @@ exports.newSurvey = async (request, response) => {
 // Edit Survey
 
 exports.editSurvey = async (request, response) => {
-  const { name, description, organisation, purpose, endDate } = request.body;
+  const { name, description, organisation, purpose, endDate, userId } =
+    request.body;
   const { surveyId } = request.params;
 
   if (!surveyId) {
@@ -157,7 +158,14 @@ exports.editSurvey = async (request, response) => {
     });
   }
 
-  if (!name && !description) {
+  if (userId) {
+    return response.status(400).json({
+      success: false,
+      message: "Cannot update this field.",
+    });
+  }
+
+  if (!name && !description && !organisation && !purpose && !endDate) {
     return response.status(400).json({
       success: false,
       message: "No new survey data to update.",

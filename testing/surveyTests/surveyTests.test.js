@@ -5,7 +5,7 @@ const { Survey } = require("../../src/models/surveyModel");
 const { User } = require("../../src/models/userModel");
 const { generateNewToken } = require("../../src/functions/jwtFunctions");
 
-// Initiate globally so can access through file
+// Global variables for test user
 let userToken;
 let userId;
 
@@ -13,7 +13,7 @@ let userId;
 beforeAll(async () => {
   await mongoose.connection.dropDatabase();
 
-  // Create test user to test surveys with
+  // Create a test user
   const testUser = await User.create({
     firstName: "Test",
     lastName: "User",
@@ -21,9 +21,8 @@ beforeAll(async () => {
     email: "test@user.com",
     password: "hashedpassword",
   });
-  // Get user id from new testUser object
+
   userId = testUser._id;
-  // Generate new token for testUser
   userToken = generateNewToken(userId, testUser.username, testUser.email);
 });
 
@@ -35,7 +34,7 @@ afterAll(async () => {
 // Test: GET /surveys
 describe("GET /surveys", () => {
   beforeAll(async () => {
-    // Create surveys for testUser
+    // Create surveys for the test user
     await Survey.create([
       { name: "Survey 1", description: "Desc 1", purpose: "work", userId },
       { name: "Survey 2", description: "Desc 2", purpose: "school", userId },
@@ -46,29 +45,48 @@ describe("GET /surveys", () => {
     const response = await request(app)
       .get("/surveys")
       .set("Authorization", `Bearer ${userToken}`);
-    // Expect the 2 previously created surveys and a 200 status code
+
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.data).toHaveLength(2);
   });
 
-  // Delete all surveys
   it("should return 404 if no surveys exist for the user", async () => {
-    // Delete all from Survey model
     await Survey.deleteMany();
+
     const response = await request(app)
       .get("/surveys")
       .set("Authorization", `Bearer ${userToken}`);
-    // No surveys found and 404 status code
+
     expect(response.status).toBe(404);
     expect(response.body.message).toBe("No surveys found for this user.");
+  });
+
+  it("should return 401 if no token is provided", async () => {
+    const response = await request(app).get("/surveys");
+
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe(
+      "Authorization token missing. Please sign in."
+    );
+  });
+
+  it("should return 403 if token is invalid", async () => {
+    const response = await request(app)
+      .get("/surveys")
+      .set("Authorization", `Bearer invalidToken`);
+
+    expect(response.status).toBe(403);
+    expect(response.body.message).toBe(
+      "Invalid token. Please sign in to access this resource."
+    );
   });
 });
 
 // Test: GET /surveys/:surveyId
 describe("GET /surveys/:surveyId", () => {
   let surveyId;
-  // Create a survey to test
+
   beforeAll(async () => {
     const survey = await Survey.create({
       name: "Specific Survey",
@@ -76,7 +94,6 @@ describe("GET /surveys/:surveyId", () => {
       purpose: "research",
       userId,
     });
-    // Assign the survey _id to surveyId
     surveyId = survey._id;
   });
 
@@ -84,7 +101,7 @@ describe("GET /surveys/:surveyId", () => {
     const response = await request(app)
       .get(`/surveys/${surveyId}`)
       .set("Authorization", `Bearer ${userToken}`);
-    // Return the above Specific survey name and 200 status code
+
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.data.name).toBe("Specific Survey");
@@ -98,7 +115,7 @@ describe("GET /surveys/:surveyId", () => {
       .set("Authorization", `Bearer ${userToken}`);
 
     expect(response.status).toBe(404);
-    expect(response.body.message).toBe("surveyId not found.");
+    expect(response.body.message).toBe("No survey with that Id found.");
   });
 });
 
@@ -116,7 +133,7 @@ describe("POST /surveys", () => {
 
     expect(response.status).toBe(201);
     expect(response.body.success).toBe(true);
-    expect(response.body.survey.name).toBe("New Survey");
+    expect(response.body.name).toBe("New Survey");
   });
 
   it("should return 400 if required fields are missing", async () => {
@@ -176,6 +193,37 @@ describe("PATCH /surveys/:surveyId/editSurvey", () => {
 
     expect(response.status).toBe(404);
     expect(response.body.message).toBe("surveyId not found.");
+  });
+
+  it("should return 401 if no token provided", async () => {
+    const response = await request(app)
+      .patch(`/surveys/${surveyId}/editSurvey`)
+      .send({ name: "Unauthorised" });
+
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe(
+      "Authorization token missing. Please sign in."
+    );
+  });
+
+  it("should return 400 if surveyId is invalid", async () => {
+    const response = await request(app)
+      .patch(`/surveys/invalidId/editSurvey`)
+      .set("Authorization", `Bearer ${userToken}`)
+      .send({ name: "Invalid ID Update" });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("Invalid surveyId format.");
+  });
+
+  it("should return 400 if attempting to update a non-editable field", async () => {
+    const response = await request(app)
+      .patch(`/surveys/${surveyId}/editSurvey`)
+      .set("Authorization", `Bearer ${userToken}`)
+      .send({ userId: "anotherUserId" });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("Cannot update this field.");
   });
 });
 
