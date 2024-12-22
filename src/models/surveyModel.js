@@ -36,6 +36,7 @@ const surveySchema = new Schema({
   },
   endDate: {
     type: String,
+    // Returning as ISO string to fix client TS errors
     default: () => {
       const currentDate = new Date();
       const oneYearFromCreate = new Date(
@@ -46,6 +47,7 @@ const surveySchema = new Schema({
     required: true,
   },
   date: {
+    // Returning as ISO string to fix client TS errors
     type: Date,
     default: () => new Date().toISOString(),
     required: true,

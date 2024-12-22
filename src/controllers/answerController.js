@@ -54,7 +54,7 @@ exports.getSurveyAnswers = async (request, response) => {
     }
 
     const questionsWithAnswers = await Question.aggregate([
-      // Find all the questions that have provided surveyId
+      // Find all the questions that with surveyId
       { $match: { surveyId: new mongoose.Types.ObjectId(surveyId) } },
       {
         $lookup: {

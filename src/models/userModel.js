@@ -35,10 +35,10 @@ const userSchema = new Schema({
     trim: true,
     minLength: [6, "Password must be at least 6 characters long."],
   },
-  organisation: {
-    type: String,
-    trim: true,
-  },
+  // organisation: {
+  //   type: String,
+  //   trim: true,
+  // },
   // References the Roles model
   //   roles: [{ type: Schema.Types.ObjectId, ref: "Roles" }],
 });

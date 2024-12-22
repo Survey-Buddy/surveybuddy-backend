@@ -9,9 +9,9 @@ if (!jwtSecretKey) {
 }
 
 // Function to generate a new JWT
-
 function generateNewToken(userId, username, email) {
   if (!userId || !username || !email) {
+    console.error("Missing required fields for token generation.");
     throw new Error("Missing required fields for token generation.");
   }
 
@@ -21,8 +21,6 @@ function generateNewToken(userId, username, email) {
         userId,
         username,
         email,
-        // firstName,
-        // lastName,
       },
       jwtSecretKey,
       {
@@ -31,51 +29,63 @@ function generateNewToken(userId, username, email) {
     );
     return token;
   } catch (error) {
-    console.error("Error generating JWT:", error);
+    console.error("Error generating JWT:", error.message);
     throw new Error("Failed to generate token.");
   }
 }
 
 // Function to decode JWT
-
 function decodeJWT(token) {
   try {
     const decodedToken = jwt.verify(token, jwtSecretKey);
 
+    if (!decodedToken.userId || !decodedToken.username || !decodedToken.email) {
+      throw new Error("Decoded token payload is missing required fields.");
+    }
+
     return decodedToken;
   } catch (error) {
-    console.error("Error decoding JWT.");
-    throw new Error("Invalid or expired JWT token.");
+    console.error("Error decoding JWT:", error.message);
+    if (error.name === "TokenExpiredError") {
+      throw new Error("JWT token has expired.");
+    } else if (error.name === "JsonWebTokenError") {
+      throw new Error("Invalid JWT token.");
+    } else {
+      throw new Error("An error occurred while decoding the token.");
+    }
   }
 }
 
-// Function to validate JWT
-
-// async function authMiddleware(request, response, next) {
-//   next();
-// }
-
+// Middleware to validate JWT
 async function authMiddleware(request, response, next) {
   try {
     const token = request.headers.authorization?.split(" ")[1];
     if (!token) {
       console.log("No token provided in the header.");
-      return response.status(403).json({
-        message: "Sign in to view this content.",
+      return response.status(401).json({
+        success: false,
+        message: "Authorization token missing. Please sign in.",
       });
     }
 
-    // Add decoded data to request object for use in subsequent middleware
-    const decodedData = decodeJWT(token);
+    const decodedData = decodeJWT(token); // Decode and verify the token
     console.log("Decoded JWT data:", decodedData);
 
-    request.user = decodedData;
-
+    request.user = decodedData; // Attach decoded data to the request object
     next();
   } catch (error) {
-    console.error("JWT validation error:", error);
+    console.error("JWT validation error:", error.message);
+
+    if (error.message.includes("expired")) {
+      return response.status(401).json({
+        success: false,
+        message: "JWT token has expired. Please sign in again.",
+      });
+    }
+
     return response.status(403).json({
-      message: "Sign in to view this content.",
+      success: false,
+      message: "Invalid token. Please sign in to access this resource.",
     });
   }
 }

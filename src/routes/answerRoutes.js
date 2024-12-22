@@ -14,6 +14,7 @@ const { checkUserAuthorisaton } = require("../services/authServices");
 const { authMiddleware } = require("../functions/jwtFunctions");
 const { isCreator } = require("../services/rolesServices");
 const { validateAnswer } = require("../services/answerFormatting");
+const validateObjectIdParams = require("../services/validateObjects");
 
 // prefix: '/answers'
 
@@ -29,16 +30,27 @@ router.get(
   //   isCreator,
   // validateQAndAs,
   // questionBelongsToSurvey,
+  validateObjectIdParams,
   getQuestionAnswers
 );
 
 // Get All Survey Answers
 
-router.get("/:surveyId", authMiddleware, getSurveyAnswers);
+router.get(
+  "/:surveyId",
+  authMiddleware,
+  validateObjectIdParams,
+  getSurveyAnswers
+);
 
 // New Unregistered Answer
 
-router.post("/:surveyId/:questionId", validateAnswer, newAnswer);
+router.post(
+  "/:surveyId/:questionId",
+  validateAnswer,
+  validateObjectIdParams,
+  newAnswer
+);
 
 // Registered User Answers
 

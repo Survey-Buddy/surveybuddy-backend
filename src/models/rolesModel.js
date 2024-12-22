@@ -1,23 +1,23 @@
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 
-const { Schema } = mongoose;
+// const { Schema } = mongoose;
 
-const rolesSchema = new Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  roles: {
-    type: String,
-    enum: ["admin", "manager", "CTO"],
-    default: [],
-    required: true,
-  },
-});
+// const rolesSchema = new Schema({
+//   userId: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: "User",
+//     required: true,
+//   },
+//   roles: {
+//     type: String,
+//     enum: ["admin", "manager", "CTO"],
+//     default: [],
+//     required: true,
+//   },
+// });
 
-const Roles = mongoose.model("Roles", rolesSchema);
+// const Roles = mongoose.model("Roles", rolesSchema);
 
-module.exports = {
-  Roles,
-};
+// module.exports = {
+//   Roles,
+// };

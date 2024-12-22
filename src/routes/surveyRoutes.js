@@ -12,6 +12,7 @@ const { isCreator } = require("../services/rolesServices");
 const { Survey } = require("../models/surveyModel");
 const questionRoutes = require("../routes/questionRoutes");
 const answerRoutes = require("../routes/answerRoutes");
+const validateObjectIdParams = require("../services/validateObjects");
 
 // Nested question child routes
 
@@ -34,6 +35,7 @@ router.post("/", authMiddleware, newSurvey);
 router.patch(
   "/:surveyId/editSurvey",
   authMiddleware,
+  validateObjectIdParams,
   isCreator(Survey, "surveyId"),
   editSurvey
 );

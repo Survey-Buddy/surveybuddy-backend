@@ -1,7 +1,17 @@
-require("dotenv").config({ path: ".env.test" });
+const { MongoMemoryServer } = require("mongodb-memory-server");
+const mongoose = require("mongoose");
 
-const { dbConnect } = require("./src/functions/dbFunctions");
+let mongoServer;
 
 beforeAll(async () => {
-  await dbConnect();
+  mongoServer = await MongoMemoryServer.create();
+  const uri = mongoServer.getUri();
+  await mongoose.connect(uri, {
+    useNewUrlParser: true,
+  });
+});
+
+afterAll(async () => {
+  await mongoose.disconnect();
+  await mongoServer.stop();
 });

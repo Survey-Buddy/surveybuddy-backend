@@ -9,6 +9,7 @@ const {
 } = require("../controllers/questionController");
 const { authMiddleware } = require("../functions/jwtFunctions");
 const { validateQAndAs } = require("../services/questionAnswerServices");
+const validateObjectIdParams = require("../services/validateObjects");
 // const { isCreator } = require("../services/rolesServices");
 // const { Question } = require("../models/questionModel");
 // const answerRoutes = require("../routes/answerRoutes");
@@ -18,15 +19,15 @@ const { validateQAndAs } = require("../services/questionAnswerServices");
 
 // Get all questions for a specific survey
 
-router.get("/", getQuestions);
+router.get("/", validateObjectIdParams, getQuestions);
 
 // Get specific question
 
-router.get("/:questionId", getQuestion);
+router.get("/:questionId", validateObjectIdParams, getQuestion);
 
 // Create a new question for a specific survey
 
-router.post("/", authMiddleware, newQuestion);
+router.post("/", authMiddleware, validateObjectIdParams, newQuestion);
 
 // Update a question for a specific survey
 

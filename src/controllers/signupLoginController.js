@@ -16,12 +16,12 @@ exports.signup = async (request, response) => {
   const { firstName, lastName, username, email, password } = request.body;
 
   try {
-    if (!firstName || !lastName || !username || !email || !password) {
-      return response.status(400).json({
-        success: false,
-        message: "Missing a required field.",
-      });
-    }
+    // if (!firstName || !lastName || !username || !email || !password) {
+    //   return response.status(400).json({
+    //     success: false,
+    //     message: "Missing a required field.",
+    //   });
+    // }
 
     // Check if email already exists
     const existingEmail = await checkExistingEmail(email);
