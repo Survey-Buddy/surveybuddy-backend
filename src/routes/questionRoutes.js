@@ -10,18 +10,15 @@ const {
 const { authMiddleware } = require("../functions/jwtFunctions");
 const { validateQAndAs } = require("../services/questionAnswerServices");
 const validateObjectIdParams = require("../services/validateObjects");
-// const { isCreator } = require("../services/rolesServices");
-// const { Question } = require("../models/questionModel");
-// const answerRoutes = require("../routes/answerRoutes");
-// const { formatQuestionMiddleware } = require("../services/questionFormat");
 
-// Question Router Paths - prefix: '/surveys/:surveyId/questions'
+// Question Router Paths
+// Prefix: '/surveys/:surveyId/questions'
 
 // Get all questions for a specific survey
 
 router.get("/", validateObjectIdParams, getQuestions);
 
-// Get specific question
+// Get a specific question by Id
 
 router.get("/:questionId", validateObjectIdParams, getQuestion);
 
@@ -30,6 +27,7 @@ router.get("/:questionId", validateObjectIdParams, getQuestion);
 router.post("/", authMiddleware, validateObjectIdParams, newQuestion);
 
 // Update a question for a specific survey
+// ** Future feature
 
 // router.patch(
 //   "/:questionId/editQuestion",
@@ -39,6 +37,7 @@ router.post("/", authMiddleware, validateObjectIdParams, newQuestion);
 // );
 
 // Delete a question from a specific survey
+// ** Future feature
 
 // router.delete(
 //   "/:questionId/deleteQuestion",

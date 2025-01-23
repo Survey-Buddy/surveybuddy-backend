@@ -20,21 +20,18 @@ const validateObjectIdParams = require("../services/validateObjects");
 
 // Answers Router Paths
 // Answers cannot be edited by anyone
-// Answers cannot be deleted
+// Answers cannot be deleted unless parent survey is deleted
 
-// Get All Question Answers
+// Get all answers for a specific question
 
 router.get(
   "/:surveyId/:questionId",
   authMiddleware,
-  //   isCreator,
-  // validateQAndAs,
-  // questionBelongsToSurvey,
   validateObjectIdParams,
   getQuestionAnswers
 );
 
-// Get All Survey Answers
+// Get all answers for a specific survey
 
 router.get(
   "/:surveyId",
@@ -43,7 +40,7 @@ router.get(
   getSurveyAnswers
 );
 
-// New Unregistered Answer
+// Submit a new answer from an unregistered user
 
 router.post(
   "/:surveyId/:questionId",
@@ -52,7 +49,8 @@ router.post(
   newAnswer
 );
 
-// Registered User Answers
+// Submit a new answer from a registered user
+// ** Future feature
 
 // router.post(
 //   "/:surveyId/:questionNum",
@@ -63,6 +61,7 @@ router.post(
 // );
 
 // Route for tracked survey results - only one set of answers per assigned respondent
+// ** Future feature
 // router.post("/newTrackedAnswer/:userId", checkUser, answerController.newTrackedAnswer)
 
 module.exports = router;

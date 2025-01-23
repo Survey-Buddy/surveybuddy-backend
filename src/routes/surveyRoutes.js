@@ -14,23 +14,23 @@ const questionRoutes = require("../routes/questionRoutes");
 const answerRoutes = require("../routes/answerRoutes");
 const validateObjectIdParams = require("../services/validateObjects");
 
-// Nested question child routes
+// Nested routes for managing questions related to a specific survey
 
 router.use("/:surveyId/questions", questionRoutes);
 
-// Get all User created surveys
+// Get all surveys created by authenticated user
 
 router.get("/", authMiddleware, getAllSurveys);
 
-// Get specific survey
+// Get specific survey details by id
 
 router.get("/:surveyId", getSpecificSurvey);
 
-// Create new survey
+// Create a new survey
 
 router.post("/", authMiddleware, newSurvey);
 
-// Update survey
+// Update an existing survey by Id
 
 router.patch(
   "/:surveyId/editSurvey",
@@ -40,7 +40,7 @@ router.patch(
   editSurvey
 );
 
-// Delete survey
+// Delete an existing survey by Id
 
 router.delete(
   "/:surveyId/deleteSurvey",

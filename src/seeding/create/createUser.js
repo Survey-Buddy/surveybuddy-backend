@@ -16,12 +16,13 @@ const MONGO_URI = process.env.DATABASE_URL;
 
 const seedDatabase = async () => {
   try {
-    // Connect to the database
+    // Connect to the database using URI env variables
     await mongoose.connect(MONGO_URI);
     console.log("Connected to the database");
 
-    // Create a user
+    // Hash password
     const hashedPassword = await bcrypt.hash("password123", 10);
+    // Create a new User
     const newUser = await User.create({
       firstName: "Tom",
       lastName: "Martin",
@@ -31,7 +32,7 @@ const seedDatabase = async () => {
     });
     console.log("New user created:", newUser);
 
-    // Create a survey for the user
+    // Create a new survey for the user
     const newSurvey = await Survey.create({
       name: "Dog Behavior Survey",
       description:
@@ -147,7 +148,7 @@ const seedDatabase = async () => {
   } catch (error) {
     console.error("Error seeding the database:", error);
   } finally {
-    // Disconnect from the database
+    // Disconnect from the database after completion
     await mongoose.disconnect();
     console.log("Disconnected from the database");
   }

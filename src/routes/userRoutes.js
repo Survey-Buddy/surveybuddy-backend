@@ -4,15 +4,19 @@ const { signup, login } = require("../controllers/signupLoginController");
 const { editUser, deleteUser } = require("../controllers/userController");
 const newUserValidation = require("../services/newUserValidation");
 
-// Signup Login Router Routes
-// Prefix http://localhost:8080/users
+// SignupLogin controller router routes
 
+// Route for user signup with validation
 router.post("/signup", newUserValidation, signup);
+
+// Route for user login
 router.post("/login", login);
 
-// User Router Routes
+// User controller router routes
 
-router.patch("/editUser", editUser);
-router.delete("/deleteUser", deleteUser);
+// ** Future features
+
+// router.patch("/editUser", editUser);
+// router.delete("/deleteUser", deleteUser);
 
 module.exports = router;
