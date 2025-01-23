@@ -5,15 +5,17 @@ const { app } = require("../../src/server");
 
 describe("POST /users/signup", () => {
   beforeEach(async () => {
-    await mongoose.connection.dropDatabase(); // Clear test DB before each test
+    // Clear test database before each test
+    await mongoose.connection.dropDatabase();
   });
 
   afterAll(async () => {
-    await mongoose.connection.close(); // Close DB connection after all tests
+    // Close database after all tests
+    await mongoose.connection.close();
   });
 
   it("should create a new user and return a token", async () => {
-    // Test successful user creation
+    // Create test User
     const response = await request(app).post("/users/signup").send({
       firstName: "Test",
       lastName: "User",
@@ -22,8 +24,11 @@ describe("POST /users/signup", () => {
       password: "123456",
     });
 
+    // Check response status is 201
     expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty("token"); // Ensure token is returned
+    // Check response contains a token
+    expect(response.body).toHaveProperty("token");
+    // Check response message
     expect(response.body.message).toBe("User created successfully.");
   });
 
@@ -34,6 +39,7 @@ describe("POST /users/signup", () => {
       email: "test@test.com",
     });
 
+    // Check response status and message
     expect(response.status).toBe(400);
     expect(response.body.message).toBe("Missing a required field.");
   });
@@ -48,6 +54,7 @@ describe("POST /users/signup", () => {
       password: "123456",
     });
 
+    // POST signup request with duplicate email
     const response = await request(app).post("/users/signup").send({
       firstName: "Test",
       lastName: "User",
@@ -56,6 +63,7 @@ describe("POST /users/signup", () => {
       password: "123456",
     });
 
+    // Check status and message
     expect(response.status).toBe(400);
     expect(response.body.message).toBe("Email already in use.");
   });
@@ -70,6 +78,7 @@ describe("POST /users/signup", () => {
       password: "123456",
     });
 
+    // POST signup request with duplicate usernames
     const response = await request(app).post("/users/signup").send({
       firstName: "Test",
       lastName: "User",
@@ -78,16 +87,18 @@ describe("POST /users/signup", () => {
       password: "123456",
     });
 
+    // Check status and message
     expect(response.status).toBe(400);
     expect(response.body.message).toBe("Username already in use.");
   });
 
   it("should return 500 on database error", async () => {
-    // Test database error handling
+    // Test database error handling using mock error
     jest.spyOn(User.prototype, "save").mockImplementationOnce(() => {
       throw new Error("Database error");
     });
 
+    // POST send signup request
     const response = await request(app).post("/users/signup").send({
       firstName: "Test",
       lastName: "User",
@@ -96,12 +107,13 @@ describe("POST /users/signup", () => {
       password: "123456",
     });
 
+    // Check status and message
     expect(response.status).toBe(500);
     expect(response.body.message).toBe("Internal server error.");
   });
 
   it("should return 400 if the password is too short", async () => {
-    // Test password validation
+    // Test password length validation
     const response = await request(app).post("/users/signup").send({
       firstName: "Test",
       lastName: "User",
@@ -110,6 +122,7 @@ describe("POST /users/signup", () => {
       password: "123",
     });
 
+    // Check status and message
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(
       "Password must be at least 6 characters long."
@@ -126,6 +139,7 @@ describe("POST /users/signup", () => {
       password: "123456",
     });
 
+    // Check status and message
     expect(response.status).toBe(400);
     expect(response.body.message).toBe("Invalid email format.");
   });
