@@ -2,11 +2,12 @@ const mongoose = require("mongoose");
 const { Answer } = require("../models/answersModel");
 const { Question } = require("../models/questionModel");
 
-// GET - All question answers
-
+// GET - Fetch all answers for a specific question
 exports.getQuestionAnswers = async (request, response) => {
   try {
     const { questionId } = request.params;
+
+    // Check if questionId is provided
     if (!questionId) {
       return response.status(400).json({
         success: false,
@@ -14,11 +15,12 @@ exports.getQuestionAnswers = async (request, response) => {
       });
     }
 
+    // Find all answers associated with the questionId
     const answers = await Answer.find({
       questionId: questionId,
     });
 
-    // Check is any answers exist
+    // Check if any answers exist
     if (answers.length === 0) {
       return response.status(404).json({
         success: false,
@@ -26,12 +28,13 @@ exports.getQuestionAnswers = async (request, response) => {
       });
     }
 
-    // Respond to client
+    // Return the found answers
     return response.status(200).json({
       success: true,
       data: { answers },
     });
   } catch (error) {
+    // Handle errors
     console.error("Error fetching question answers:", error);
     return response.status(500).json({
       success: false,
@@ -40,12 +43,12 @@ exports.getQuestionAnswers = async (request, response) => {
   }
 };
 
-// GET - All survey answers
-
+// GET - Fetch all answers for a specific survey
 exports.getSurveyAnswers = async (request, response) => {
   try {
     const { surveyId } = request.params;
 
+    // Check if surveyId is provided
     if (!surveyId) {
       return response.status(400).json({
         success: false,
@@ -53,20 +56,21 @@ exports.getSurveyAnswers = async (request, response) => {
       });
     }
 
+    // Aggregate questions and their answers for the survey
     const questionsWithAnswers = await Question.aggregate([
-      // Find all the questions that with surveyId
-      { $match: { surveyId: new mongoose.Types.ObjectId(surveyId) } },
+      { $match: { surveyId: new mongoose.Types.ObjectId(surveyId) } }, // Match surveyId
       {
         $lookup: {
-          from: "answers", // Collection to join with
-          localField: "_id", // Field in question model to match
-          foreignField: "questionId", // Field in answer model to match
-          as: "answers", // Output array name
-          pipeline: [{ $limit: 100 }], // Limit results
+          from: "answers", // Join with the answers collection
+          localField: "_id", // Match the question ID
+          foreignField: "questionId", // Match the question ID in answers
+          as: "answers", // Output field for the joined data
+          pipeline: [{ $limit: 100 }], // Limit the number of answers
         },
       },
     ]);
 
+    // Check if any questions with answers are found
     if (questionsWithAnswers.length === 0) {
       return response.status(404).json({
         success: false,
@@ -74,11 +78,13 @@ exports.getSurveyAnswers = async (request, response) => {
       });
     }
 
+    // Return the questions with their answers
     return response.status(200).json({
       success: true,
       data: { questionsWithAnswers },
     });
   } catch (error) {
+    // Handle errors
     console.error("Error fetching question answers:", error);
     return response.status(500).json({
       success: false,
@@ -87,12 +93,12 @@ exports.getSurveyAnswers = async (request, response) => {
   }
 };
 
-// POST - Answer created by any unregistered user
-
+// POST - Create a new answer for any unregistered user
 exports.newAnswer = async (request, response) => {
   const validatedAnswer = request.body.validatedAnswer;
   const { surveyId, questionId } = request.params;
 
+  // Check if required fields are provided
   if (!surveyId || !questionId || !validatedAnswer) {
     return response.status(400).json({
       success: false,
@@ -104,18 +110,21 @@ exports.newAnswer = async (request, response) => {
   const answer = validatedAnswer;
 
   try {
+    // Create a new answer and save it to the database
     const newAnswer = await new Answer({
       questionId,
       answer,
     });
     await newAnswer.save();
 
+    // Respond with the newly created answer
     return response.status(201).json({
       success: true,
       message: "Answer created successfully.",
       answer: newAnswer,
     });
   } catch (error) {
+    // Handle errors
     console.error("Error creating answer:", error);
     return response.status(500).json({
       success: false,
@@ -124,13 +133,13 @@ exports.newAnswer = async (request, response) => {
   }
 };
 
-// POST - Answers created by tracked registered users || Inactive
-
+// POST - Create an answer for a registered user (currently inactive)
 // exports.newRegisteredAnswer = async (request, response) => {
 //   const { answer } = request.body;
 //   const { surveyId, questionId } = request.params;
 //   const { userId } = request.user?.userId;
 
+//   // Check if userId is provided
 //   if (!userId) {
 //     return response.status(400).json({
 //       success: false,
@@ -139,6 +148,7 @@ exports.newAnswer = async (request, response) => {
 //     });
 //   }
 
+//   // Check if required fields are provided
 //   if (!surveyId || !questionId || !answer) {
 //     return response.status(400).json({
 //       success: false,
@@ -147,6 +157,7 @@ exports.newAnswer = async (request, response) => {
 //   }
 
 //   try {
+//     // Create a new answer and save it to the database
 //     const newAnswer = await new Answer({
 //       surveyId,
 //       questionId,
@@ -160,6 +171,7 @@ exports.newAnswer = async (request, response) => {
 //       answer: newAnswer,
 //     });
 //   } catch (error) {
+//     // Handle errors
 //     console.error("Error creating registered answer:", error);
 //     return response.status(500).json({
 //       success: false,

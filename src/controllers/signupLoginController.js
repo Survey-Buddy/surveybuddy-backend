@@ -16,13 +16,6 @@ exports.signup = async (request, response) => {
   const { firstName, lastName, username, email, password } = request.body;
 
   try {
-    // if (!firstName || !lastName || !username || !email || !password) {
-    //   return response.status(400).json({
-    //     success: false,
-    //     message: "Missing a required field.",
-    //   });
-    // }
-
     // Check if email already exists
     const existingEmail = await checkExistingEmail(email);
     if (existingEmail) {
@@ -41,10 +34,10 @@ exports.signup = async (request, response) => {
       });
     }
 
-    // Hash the password
+    // Hash the password for security
     const hashedPassword = await hashPassword(password);
 
-    // Create new User and save to DB
+    // Create new User and save to the database
     const newUser = new User({
       firstName,
       lastName,
@@ -54,18 +47,16 @@ exports.signup = async (request, response) => {
     });
     await newUser.save();
 
-    // Generate new token
+    // Generate a token for the new user
     const token = generateNewToken(
       newUser._id,
       newUser.username,
       newUser.email
-      // newUser.firstName,
-      // newUser.lastName
     );
 
     console.log("New user registered successfully");
 
-    // Respond to client
+    // Respond with success and token
     return response.status(201).json({
       success: true,
       message: "User created successfully.",
@@ -75,6 +66,7 @@ exports.signup = async (request, response) => {
       token: token,
     });
   } catch (error) {
+    // Handle unexpected errors
     console.error("Error during signup:", error);
     return response.status(500).json({
       success: false,
@@ -87,19 +79,19 @@ exports.signup = async (request, response) => {
 // POST - /users/login
 
 exports.login = async (request, response) => {
-  // Get username and password from request
+  // Extract email and password from request body
   const { email, password } = request.body;
 
-  // Check if email and password exist
   try {
+    // Ensure email and password are provided
     if (!email || !password) {
       return response.status(400).json({
         success: false,
-        message: "email and password are required",
+        message: "Email and password are required",
       });
     }
 
-    // Check if email exists in the DB
+    // Check if the email exists in the database
     const user = await User.findOne({ email }).select(
       "password _id username email"
     );
@@ -110,7 +102,7 @@ exports.login = async (request, response) => {
       });
     }
 
-    // Check if user password matches entered password
+    // Verify the provided password matches the stored password
     const passwordMatch = await comparePasswords(password, user.password);
     if (!passwordMatch) {
       return response.status(400).json({
@@ -119,20 +111,20 @@ exports.login = async (request, response) => {
       });
     }
 
-    // Generate new token
+    // Generate a token for the user
     const token = generateNewToken(user._id, user.username, user.email);
 
     console.log("User logged in successfully");
 
+    // Respond with success and user details
     return response.status(200).json({
       success: true,
       userId: user._id,
       username: user.username,
-      // firstName: user.firstName,
-      // lastName: user.lastName,
       token: token,
     });
   } catch (error) {
+    // Handle unexpected errors
     console.error("Error logging in:", error);
     return response.status(500).json({
       success: false,

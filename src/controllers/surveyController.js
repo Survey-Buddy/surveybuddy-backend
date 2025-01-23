@@ -6,6 +6,7 @@ const { User } = require("../models/userModel");
 exports.getAllSurveys = async (request, response) => {
   const decodedUserId = request.user?.userId;
 
+  // Check if userId exists in the request
   if (!decodedUserId) {
     return response.status(400).json({
       success: false,
@@ -14,8 +15,10 @@ exports.getAllSurveys = async (request, response) => {
   }
 
   try {
+    // Fetch surveys for specific user
     const userSurveys = await Survey.find({ userId: decodedUserId });
 
+    // Check if any surveys exist
     if (userSurveys.length === 0) {
       return response.status(404).json({
         success: false,
@@ -23,6 +26,7 @@ exports.getAllSurveys = async (request, response) => {
       });
     }
 
+    // Format dates to ISO strings for front end
     const formattedSurveys = userSurveys.map((survey) => ({
       ...survey.toObject(),
       date: survey.date.toISOString(),
@@ -47,6 +51,7 @@ exports.getAllSurveys = async (request, response) => {
 exports.getSpecificSurvey = async (request, response) => {
   const { surveyId } = request.params;
 
+  // Check if surveyId exists
   if (!surveyId) {
     return response.status(400).json({
       success: false,
@@ -55,8 +60,10 @@ exports.getSpecificSurvey = async (request, response) => {
   }
 
   try {
+    // Fetch survey by id
     const survey = await Survey.findById(surveyId);
 
+    // Check if survey exists
     if (!survey) {
       return response.status(404).json({
         success: false,
@@ -92,6 +99,8 @@ exports.newSurvey = async (request, response) => {
 
   try {
     const userId = request.user?.userId;
+
+    // Check if required fields exist
     if (!userId || !name || !description) {
       return response.status(400).json({
         success: false,
@@ -99,6 +108,7 @@ exports.newSurvey = async (request, response) => {
       });
     }
 
+    // Verify user exists
     const user = await User.findById(userId);
     if (!user) {
       return response.status(404).json({
@@ -116,14 +126,12 @@ exports.newSurvey = async (request, response) => {
       purpose,
       organisation,
       userId: userId,
-      // If undefined it defaults to schema default + 1yr
+      // Default for front end TS error fix
       endDate: endDate || undefined,
     });
     await newSurvey.save();
 
-    console.log(newSurvey);
-
-    // Respond to client
+    // Respond to client with survey details
     return response.status(201).json({
       success: true,
       message: "Survey created succssfully.",
@@ -144,13 +152,14 @@ exports.newSurvey = async (request, response) => {
   }
 };
 
-// Edit Survey
+// Edit existing survey
 
 exports.editSurvey = async (request, response) => {
   const { name, description, organisation, purpose, endDate, userId } =
     request.body;
   const { surveyId } = request.params;
 
+  // Check if surveyId is provided
   if (!surveyId) {
     return response.status(400).json({
       success: false,
@@ -158,6 +167,7 @@ exports.editSurvey = async (request, response) => {
     });
   }
 
+  // Cannot update restricted fields
   if (userId) {
     return response.status(400).json({
       success: false,
@@ -165,6 +175,7 @@ exports.editSurvey = async (request, response) => {
     });
   }
 
+  // Check if there are any fields to update
   if (!name && !description && !organisation && !purpose && !endDate) {
     return response.status(400).json({
       success: false,
@@ -172,6 +183,7 @@ exports.editSurvey = async (request, response) => {
     });
   }
 
+  // Add fields to update to hashmap
   const fieldsToUpdate = {};
   if (name) fieldsToUpdate.name = name;
   if (description) fieldsToUpdate.description = description;
@@ -188,7 +200,7 @@ exports.editSurvey = async (request, response) => {
   }
 
   try {
-    // Update survey
+    // Update survey with provided fields
     const updatedSurvey = await Survey.findByIdAndUpdate(
       surveyId,
       // Only include truthy values in update
@@ -199,10 +211,11 @@ exports.editSurvey = async (request, response) => {
         ...(purpose && { purpose }),
         ...(endDate && { endDate }),
       },
-      // Enforce schema validation rules (minLength etc)
+      // Schema validation rules still apply
       { new: true, runValidators: true }
     );
 
+    // Check if survey exists
     if (!updatedSurvey) {
       return res.status(404).json({
         success: false,
@@ -210,7 +223,7 @@ exports.editSurvey = async (request, response) => {
       });
     }
 
-    // Respond to client
+    // Respond to client with update survey details
     return response.status(200).json({
       success: true,
       message: "Survey successfully updated.",
@@ -222,11 +235,12 @@ exports.editSurvey = async (request, response) => {
   }
 };
 
-// Delete Survey Path
+// Delete a survey
 
 exports.deleteSurvey = async (request, response) => {
   const { surveyId } = request.params;
 
+  // Check if surveyId is provided
   if (!surveyId) {
     return response.status(404).json({
       success: false,
@@ -235,8 +249,10 @@ exports.deleteSurvey = async (request, response) => {
   }
 
   try {
-    // Delete survey
+    // Delete survey by its id
     const surveyToDelete = await Survey.findByIdAndDelete(surveyId);
+
+    // Check if survey exists
     if (!surveyToDelete) {
       return response.status(400).json({
         success: false,
@@ -244,7 +260,7 @@ exports.deleteSurvey = async (request, response) => {
       });
     }
 
-    // Respond to client
+    // Respond to client with success message
     return response.status(201).json({
       success: true,
       message: "Survey deleted successfully.",
